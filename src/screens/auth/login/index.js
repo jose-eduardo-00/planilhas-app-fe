@@ -34,8 +34,7 @@ const LoginScreen = () => {
   };
 
   const handleRegister = () => {
-    // redirecionar pro cadastro quando tiver
-    // navigation.navigate("Cadastro");
+    navigation.navigate("Register");
   };
 
   const handleForgotPass = () => {

@@ -3,6 +3,10 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import Eye from "../../../assets/icon/eye.svg";
 import ClosedEye from "../../../assets/icon/closedEye.svg";
+import RedEye from "../../../assets/icon/eyeRed.svg";
+import ClosedRedEye from "../../../assets/icon/closedEyeRed.svg";
+import GreenEye from "../../../assets/icon/eyeGreen.svg";
+import ClosedGreenEye from "../../../assets/icon/closedEyeGreen.svg";
 
 const MainInput = forwardRef(
   (
@@ -15,11 +19,24 @@ const MainInput = forwardRef(
       isPasswordChange,
       onSubmitEditing,
       returnKeyType = "done",
+      fail,
+      success,
     },
     ref
   ) => {
     return (
-      <View style={styles.inputArea}>
+      <View
+        style={[
+          styles.inputArea,
+          {
+            borderColor: fail
+              ? Colors.red
+              : success
+              ? Colors.green
+              : Colors.black,
+          },
+        ]}
+      >
         {isPassword ? (
           <>
             <TextInput
@@ -34,7 +51,21 @@ const MainInput = forwardRef(
               blurOnSubmit={false} // Mantém o teclado aberto
             />
             <TouchableOpacity onPress={isPasswordChange}>
-              {isPasswordVisible ? <ClosedEye /> : <Eye />}
+              {isPasswordVisible ? (
+                fail ? (
+                  <ClosedRedEye />
+                ) : success ? (
+                  <ClosedGreenEye />
+                ) : (
+                  <ClosedEye />
+                )
+              ) : fail ? (
+                <RedEye />
+              ) : success ? (
+                <GreenEye />
+              ) : (
+                <Eye />
+              )}
             </TouchableOpacity>
           </>
         ) : (
@@ -57,7 +88,6 @@ const MainInput = forwardRef(
 const styles = StyleSheet.create({
   inputArea: {
     borderWidth: 2,
-    borderColor: Colors.black,
     borderRadius: 15,
     height: 52,
     justifyContent: "space-between",
