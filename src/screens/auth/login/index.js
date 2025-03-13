@@ -38,8 +38,7 @@ const LoginScreen = () => {
   };
 
   const handleForgotPass = () => {
-    // redirecionar pro esqueceu a senha quando tiver
-    // navigation.navigate("RecoveryPass");
+    navigation.navigate("SendEmail");
   };
 
   const handleLogin = () => {
@@ -49,6 +48,7 @@ const LoginScreen = () => {
     console.log("Senha ===>", senha);
 
     setTimeout(() => {
+      navigation.navigate("Drawer");
       setIsLoading(false);
     }, 3000);
   };

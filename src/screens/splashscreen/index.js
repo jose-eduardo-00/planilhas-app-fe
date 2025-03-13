@@ -20,7 +20,7 @@ const SplashScreen = () => {
     if (!token) {
       navigation.navigate("Login");
     } else {
-      navigation.navigate("Home");
+      navigation.navigate("Drawer");
     }
   };
 

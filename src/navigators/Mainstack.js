@@ -4,6 +4,10 @@ import SplashScreen from "../screens/splashscreen";
 import LoginScreen from "../screens/auth/login";
 import MainHeader from "../components/header/mainHeader";
 import RegisterScreen from "../screens/auth/register";
+import RecoveryPassScreen from "../screens/auth/recoveyPass";
+import SendEmailScreen from "../screens/auth/sendEmail";
+import VerifyCodeScreen from "../screens/auth/verifyCode";
+import DrawerNavigator from "./DrawerNavigator";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +34,30 @@ function MainStack() {
       <Stack.Screen
         name="Register"
         component={RegisterScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="SendEmail"
+        component={SendEmailScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="VerifyCode"
+        component={VerifyCodeScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="RecoveryPass"
+        component={RecoveryPassScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="Drawer"
+        component={DrawerNavigator}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

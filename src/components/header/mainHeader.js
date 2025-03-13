@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   ButtonArea: {
     position: "absolute",
     bottom: "8%",
-    left: "6%",
+    left: "8%",
     zIndex: 2,
   },
 });

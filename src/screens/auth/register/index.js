@@ -119,6 +119,7 @@ const RegisterScreen = () => {
     });
 
     setTimeout(() => {
+      navigation.navigate("VerifyCode", { email: email, rota: "register" });
       setIsLoading(false);
     }, 3000);
   };
