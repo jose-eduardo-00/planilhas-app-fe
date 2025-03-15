@@ -88,13 +88,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    paddingTop: 55,
+    paddingTop: 40,
     paddingHorizontal: 30,
   },
   title: {
     fontSize: 30,
     alignSelf: "center",
     fontFamily: "Roboto-Regular",
+    marginBottom: 10,
   },
   settingsList: {
     marginTop: 20,

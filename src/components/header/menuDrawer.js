@@ -15,7 +15,7 @@ const MenuDrawer = () => {
       <View style={styles.boxPerfil}>
         <View>
           <Text style={styles.name}>Marcos</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
             <Text style={styles.textPerfil}>Ver perfil</Text>
           </TouchableOpacity>
         </View>

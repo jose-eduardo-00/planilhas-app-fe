@@ -9,6 +9,7 @@ import SendEmailScreen from "../screens/auth/sendEmail";
 import VerifyCodeScreen from "../screens/auth/verifyCode";
 import DrawerNavigator from "./DrawerNavigator";
 import ConfigScreen from "../screens/config";
+import ProfileScreen from "../screens/profile";
 
 const Stack = createStackNavigator();
 
@@ -59,6 +60,12 @@ function MainStack() {
       <Stack.Screen
         name="Config"
         component={ConfigScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
         options={{ header: () => <MainHeader /> }}
       />
 
