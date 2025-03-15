@@ -8,6 +8,7 @@ import RecoveryPassScreen from "../screens/auth/recoveyPass";
 import SendEmailScreen from "../screens/auth/sendEmail";
 import VerifyCodeScreen from "../screens/auth/verifyCode";
 import DrawerNavigator from "./DrawerNavigator";
+import ConfigScreen from "../screens/config";
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,12 @@ function MainStack() {
       <Stack.Screen
         name="RecoveryPass"
         component={RecoveryPassScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="Config"
+        component={ConfigScreen}
         options={{ header: () => <MainHeader /> }}
       />
 

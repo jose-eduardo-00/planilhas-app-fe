@@ -17,7 +17,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.boxRecent}>
-        <Text style={styles.titleRecent}>Vizualizado Recentemente</Text>
+        <Text style={styles.titleRecent}>Visualizado Recentemente</Text>
 
         <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
       </View>

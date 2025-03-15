@@ -31,7 +31,7 @@ const MenuDrawer = () => {
         <IconDados />
         <Text style={styles.textOption}>Dados Base</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.boxOptions1}>
+      <TouchableOpacity style={styles.boxOptions1}  onPress={() => navigation.navigate("Config")}>
         <IconConfig />
         <Text style={styles.textOption}>Configurações</Text>
       </TouchableOpacity>
