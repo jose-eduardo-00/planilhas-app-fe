@@ -1,17 +1,12 @@
 import React, { useRef, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Modal 
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Modal } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import { useNavigation } from "@react-navigation/native";
 import MainHeader from "../../components/header/mainHeader";
 import ThemeApp from "../../../assets/icon/themeApp";
 import Notification from "../../../assets/icon/notification";
 import Config from "../../../assets/icon/config";
+import ThemeModal from "../../components/modals/themeModal";
 
 const ConfigScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,13 +19,17 @@ const ConfigScreen = () => {
     { id: "sistema", label: "Tema do dispositivo" },
   ];
 
+  const handleThemeModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Configurações</Text>
 
-    {/* lista de config */}
-    <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.option} onPress={() => setModalVisible(true)}>
+      {/* lista de config */}
+      <View style={styles.settingsList}>
+        <TouchableOpacity style={styles.option} onPress={handleThemeModal}>
           <ThemeApp />
           <Text style={styles.optionText}>Tema do App</Text>
         </TouchableOpacity>
@@ -54,32 +53,10 @@ const ConfigScreen = () => {
           <Config />
           <Text style={styles.optionText}>Configuração 5</Text>
         </TouchableOpacity>
-    </View>
+      </View>
 
-    {/* modal seleção de tema */}
-    <Modal transparent={true} visible={modalVisible} animationType="fade">
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            {themes.map((theme) => (
-              <TouchableOpacity
-                key={theme.id}
-                style={styles.themeOption}
-                onPress={() => {
-                  setSelectedTheme(theme.id);
-                  setModalVisible(false);
-                }}
-              >
-                <View style={styles.radioCircle}>
-                  {selectedTheme === theme.id && <View style={styles.radioInnerCircle} />}
-                </View>
-                <Text style={styles.themeText}>{theme.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-    </Modal>
-
-      
+      {/* modal seleção de tema */}
+      <ThemeModal onPress={handleThemeModal} visible={modalVisible} />
     </View>
   );
 };
@@ -88,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    paddingTop: 40,
+    paddingTop: 30,
     paddingHorizontal: 30,
   },
   title: {
@@ -111,42 +88,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Roboto-Regular",
     marginLeft: 10,
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    backgroundColor: Colors.white,
-    padding: 36,
-    borderRadius: 16,
-    width: 300,
-  },
-  themeOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-  },
-  themeText: {
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  radioCircle: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: Colors.black,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  radioInnerCircle: {
-    height: 12,
-    width: 12,
-    borderRadius: 6,
-    backgroundColor: Colors.black,
   },
 });
 

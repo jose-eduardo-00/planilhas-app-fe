@@ -10,12 +10,18 @@ import { Colors } from "../../../../constants/colors/colors";
 import MainInput from "../../../components/inputs/mainInput";
 import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
+import AlertModal from "../../../components/modals/alertModal";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaVisible, setSenhaVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const navigation = useNavigation();
 
@@ -49,8 +55,15 @@ const LoginScreen = () => {
 
     setTimeout(() => {
       navigation.navigate("Drawer");
+      // setVisible(true);
+      // setModalMessage("Teste de mensagem");
+      // setModalSuccess(!modalSuccess);
       setIsLoading(false);
     }, 3000);
+  };
+
+  const handleAlertModal = () => {
+    setVisible(!visible);
   };
 
   return (
@@ -97,6 +110,15 @@ const LoginScreen = () => {
       <TouchableOpacity style={styles.boxRegister} onPress={handleRegister}>
         <Text style={styles.textRegister}>ainda não tem conta?</Text>
       </TouchableOpacity>
+
+      <AlertModal
+        visible={visible}
+        message={modalMessage}
+        success={modalSuccess}
+        onPress={handleAlertModal}
+        isLoadingModal={isLoadingModal}
+        textButton={"Entrar"}
+      />
     </View>
   );
 };

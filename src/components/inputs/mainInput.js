@@ -22,6 +22,7 @@ const MainInput = forwardRef(
       fail,
       success,
       maxLength,
+      keyboardType,
     },
     ref
   ) => {
@@ -51,6 +52,7 @@ const MainInput = forwardRef(
               onSubmitEditing={onSubmitEditing} // Quando o usuário aperta "OK"
               blurOnSubmit={false} // Mantém o teclado aberto
               maxLength={maxLength}
+              keyboardType={keyboardType}
             />
             <TouchableOpacity onPress={isPasswordChange}>
               {isPasswordVisible ? (
@@ -81,6 +83,7 @@ const MainInput = forwardRef(
             onSubmitEditing={onSubmitEditing} // Muda para o próximo input
             blurOnSubmit={false}
             maxLength={maxLength}
+            keyboardType={keyboardType}
           />
         )}
       </View>

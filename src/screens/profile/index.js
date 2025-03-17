@@ -1,22 +1,17 @@
 import React, { useRef, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Keyboard, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import MainInput from "../../components/inputs/mainInput";
 import MainButton from "../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
 
-
 const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [income, setIncome] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const emailRef = useRef(null);
   const incomeRef = useRef(null);
@@ -37,13 +32,20 @@ const ProfileScreen = () => {
     }, 3000);
   };
 
+  const handlePassChange = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.scrollView}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>Perfil</Text>
 
         <View style={styles.avatarContainer}>
-            <AvatarICon width={80} height={80} style={styles.avatarIcon} />
+          <AvatarICon width={80} height={80} style={styles.avatarIcon} />
         </View>
 
         <View style={styles.boxInput}>
@@ -76,12 +78,20 @@ const ProfileScreen = () => {
             onChange={setIncome}
             placeholder="R$"
             text={income}
-            keyboardType="numeric"
+            onSubmitEditing={Keyboard.dismiss}
+            isPassword={true}
+            isPasswordVisible={passwordVisible}
+            isPasswordChange={handlePassChange}
+            keyboardType={"number-pad"}
           />
         </View>
 
         <View style={styles.boxButton}>
-          <MainButton text="EDITAR" onPress={handleEdit} isLoading={isLoading} />
+          <MainButton
+            text="EDITAR"
+            onPress={handleEdit}
+            isLoading={isLoading}
+          />
         </View>
       </View>
     </ScrollView>
@@ -102,8 +112,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   avatarContainer: {
-    alignItems: "center", 
-    marginVertical: 20,   
+    alignItems: "center",
+    marginVertical: 20,
   },
   scrollView: {
     flexGrow: 1,
