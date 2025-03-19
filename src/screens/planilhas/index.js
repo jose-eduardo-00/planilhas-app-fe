@@ -11,7 +11,6 @@ import { Colors } from "../../../constants/colors/colors";
 import IconFilter from "../../../assets/icon/filterIcon.svg";
 import MainCard from "../../components/cards/mainCard";
 import MenuBottomModal from "../../components/modals/menuBottomModal";
-import AlertModal from "../../components/modals/alertModal";
 
 const PlanilhasScreen = () => {
   const [visible, setVisible] = useState(false);

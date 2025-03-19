@@ -19,12 +19,17 @@ const HomeScreen = () => {
   const handlePlanilha = () => {
     navigation.navigate("Planilhas");
   };
-  const handlePlus = () => {};
+  const handlePlus = () => {
+    navigation.navigate("AddPlanilha");
+  };
   const handleGraph = () => {};
   const handlePerfil = () => {
     navigation.navigate("Profile");
   };
 
+  const handlePlanilhaPreview = () => {
+    navigation.navigate("PlanilhaPreview");
+  };
   const options = [
     {
       id: "1",
@@ -47,7 +52,11 @@ const HomeScreen = () => {
       <View style={styles.boxRecent}>
         <Text style={styles.titleRecent}>Visualizado Recentemente</Text>
 
-        <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
+        <MainCard
+          name={"Nome da planilha"}
+          date={"20/01/2001"}
+          onPress={handlePlanilhaPreview}
+        />
       </View>
 
       <FlatList

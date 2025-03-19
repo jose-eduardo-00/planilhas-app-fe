@@ -1,14 +1,14 @@
 import React from "react";
 import { Modal, StatusBar, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
-import LottieView from "lottie-react-native";
 import MainButton from "../buttons/mainButton";
 
-const AlertModal = ({
+const ResumoModal = ({
   visible,
   onPress,
-  success,
-  message,
+  renda,
+  total,
+  saldo,
   isLoadingModal,
   textButton,
 }) => {
@@ -26,25 +26,11 @@ const AlertModal = ({
           backgroundColor={"rgba(0, 0, 0, 0.5)"}
         />
         <View style={styles.modalContainer}>
-          {/* Animação de Sucesso ou Erro */}
-          <LottieView
-            source={
-              success
-                ? require("../../../assets/lottie/success.json") // Caminho para a animação de sucesso
-                : require("../../../assets/lottie/error.json") // Caminho para a animação de erro
-            }
-            autoPlay
-            loop={false}
-            style={styles.lottie}
-          />
-
-          {/* Mensagem de Sucesso ou Erro */}
-          <Text style={styles.message}>{message}</Text>
-
-          {/* Botão de Fechar */}
-          {/* <TouchableOpacity style={styles.button} onPress={onPress}>
-            <Text style={styles.buttonText}>OK</Text>
-          </TouchableOpacity> */}
+          <Text style={styles.message}>RENDA: R$ {renda}</Text>
+          <Text style={styles.message}>
+            TOTAL DAS CONTAS {"\n"} R$ {total}
+          </Text>
+          <Text style={styles.message}>SALDO: R$ {saldo}</Text>
 
           <View style={styles.boxButton}>
             <MainButton
@@ -70,8 +56,10 @@ const styles = StyleSheet.create({
     width: "80%",
     backgroundColor: Colors.white,
     borderRadius: 12,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
     alignItems: "center",
+    justifyContent: "space-around",
   },
   lottie: {
     width: 100,
@@ -79,11 +67,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   message: {
-    fontSize: 18,
+    fontSize: 15,
     color: Colors.black,
+    fontFamily: "Roboto-Black",
     textAlign: "center",
-    marginBottom: 20,
-    fontFamily: "Roboto-Regular",
+    marginBottom: 30,
   },
   button: {
     backgroundColor: Colors.thirdBlack,
@@ -104,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AlertModal;
+export default ResumoModal;

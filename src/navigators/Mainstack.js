@@ -13,6 +13,9 @@ import ProfileScreen from "../screens/profile";
 import NotificationScreen from "../screens/notification";
 import PlanilhasScreen from "../screens/planilhas";
 import BaseDataScreen from "../screens/baseData";
+import PlanilhaPreviewScreen from "../screens/planilhaPreview";
+import PlanilhaEditScreen from "../screens/editPlanilha";
+import AddPlanilhaScreen from "../screens/addPlanilha";
 
 const Stack = createStackNavigator();
 
@@ -87,6 +90,24 @@ function MainStack() {
       <Stack.Screen
         name="BaseData"
         component={BaseDataScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="PlanilhaPreview"
+        component={PlanilhaPreviewScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="PlanilhaEdit"
+        component={PlanilhaEditScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="AddPlanilha"
+        component={AddPlanilhaScreen}
         options={{ header: () => <MainHeader /> }}
       />
 

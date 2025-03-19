@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { loadFonts } from "../../../constants/fonts/fonts";
+import { Colors } from "../../../constants/colors/colors";
 
 const SplashScreen = () => {
   const navigation = useNavigation();
@@ -18,7 +19,7 @@ const SplashScreen = () => {
     const token = await AsyncStorage.getItem("token");
 
     if (!token) {
-      navigation.navigate("Drawer");
+      navigation.navigate("Login");
     } else {
       navigation.navigate("Drawer");
     }
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: Colors.white,
   },
   title: {
     fontFamily: "Roboto-Bold", // Usando a fonte nomeada

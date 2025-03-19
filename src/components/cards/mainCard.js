@@ -1,17 +1,17 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 
-const MainCard = ({ name, date }) => {
+const MainCard = ({ name, date, onPress }) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.boxName}>
         <Text style={styles.name}>{name}</Text>
       </View>
       <View style={styles.boxDate}>
         <Text style={styles.date}>{date}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
