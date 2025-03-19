@@ -10,6 +10,9 @@ import VerifyCodeScreen from "../screens/auth/verifyCode";
 import DrawerNavigator from "./DrawerNavigator";
 import ConfigScreen from "../screens/config";
 import ProfileScreen from "../screens/profile";
+import NotificationScreen from "../screens/notification";
+import PlanilhasScreen from "../screens/planilhas";
+import BaseDataScreen from "../screens/baseData";
 
 const Stack = createStackNavigator();
 
@@ -66,6 +69,24 @@ function MainStack() {
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="Planilhas"
+        component={PlanilhasScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="BaseData"
+        component={BaseDataScreen}
         options={{ header: () => <MainHeader /> }}
       />
 

@@ -13,6 +13,19 @@ import { Colors } from "../../../constants/colors/colors";
 const DrawerHeader = () => {
   const navigation = useNavigation();
 
+  const getSaudacao = () => {
+    const agora = new Date();
+    const horas = agora.getHours();
+
+    if (horas >= 6 && horas < 12) {
+      return "Olá, Bom dia";
+    } else if (horas >= 12 && horas < 19) {
+      return "Olá, Boa tarde";
+    } else {
+      return "Olá, Boa noite";
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -23,8 +36,7 @@ const DrawerHeader = () => {
       <TouchableOpacity onPress={() => navigation.openDrawer()}>
         <IconMenu />
       </TouchableOpacity>
-
-      <Text style={styles.text}>Olá, Bom dia</Text>
+      <Text style={styles.text}>{getSaudacao()}</Text>
     </View>
   );
 };

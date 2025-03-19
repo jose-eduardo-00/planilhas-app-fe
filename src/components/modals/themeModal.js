@@ -8,9 +8,6 @@ import {
   View,
 } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
-import LottieView from "lottie-react-native";
-import MainButton from "../buttons/mainButton";
-import { isLoading } from "expo-font";
 
 const ThemeModal = ({ visible, onPress }) => {
   const [selectedTheme, setSelectedTheme] = useState("claro");

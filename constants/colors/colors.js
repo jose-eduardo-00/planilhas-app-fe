@@ -5,6 +5,7 @@ const Colors = {
   secondaryBlack: "#09080D",
   thirdBlack: "#212121",
   gray: "#E0E0E0",
+  secondaryGray: "#757575",
   green: "#81C784",
 };
 

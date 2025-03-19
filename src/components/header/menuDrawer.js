@@ -23,15 +23,24 @@ const MenuDrawer = () => {
       </View>
       <View style={styles.div}></View>
 
-      <TouchableOpacity style={styles.boxOptions}>
+      <TouchableOpacity
+        style={styles.boxOptions}
+        onPress={() => navigation.navigate("Planilhas")}
+      >
         <IconPlanilha />
         <Text style={styles.textOption}>Planilhas</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.boxOptions1}>
+      <TouchableOpacity
+        style={styles.boxOptions1}
+        onPress={() => navigation.navigate("BaseData")}
+      >
         <IconDados />
         <Text style={styles.textOption}>Dados Base</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.boxOptions1}  onPress={() => navigation.navigate("Config")}>
+      <TouchableOpacity
+        style={styles.boxOptions1}
+        onPress={() => navigation.navigate("Config")}
+      >
         <IconConfig />
         <Text style={styles.textOption}>Configurações</Text>
       </TouchableOpacity>

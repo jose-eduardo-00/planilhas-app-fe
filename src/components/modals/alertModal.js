@@ -1,16 +1,8 @@
 import React from "react";
-import {
-  Modal,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, StatusBar, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import LottieView from "lottie-react-native";
 import MainButton from "../buttons/mainButton";
-import { isLoading } from "expo-font";
 
 const AlertModal = ({
   visible,

@@ -1,8 +1,13 @@
 import React, { useRef, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Modal } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import { useNavigation } from "@react-navigation/native";
-import MainHeader from "../../components/header/mainHeader";
 import ThemeApp from "../../../assets/icon/themeApp";
 import Notification from "../../../assets/icon/notification";
 import Config from "../../../assets/icon/config";
@@ -25,6 +30,11 @@ const ConfigScreen = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle={"dark-content"}
+        translucent={true}
+        backgroundColor={Colors.white}
+      />
       <Text style={styles.title}>Configurações</Text>
 
       {/* lista de config */}

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import MainCard from "../../components/cards/mainCard";
 import ButtonCard from "../../components/cards/buttonCards";
@@ -7,12 +7,40 @@ import IconFile from "../../../assets/icon/fileIcon.svg";
 import IconPlus from "../../../assets/icon/plusBlackIcon.svg";
 import IconGraph from "../../../assets/icon/graphBlackIcon.svg";
 import IconPerfil from "../../../assets/icon/perfilBlackIcon.svg";
+import IconNotification from "../../../assets/icon/notification.svg";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
-  const handlePlanilha = () => {};
+  const navigation = useNavigation();
+
+  const handleNotificacoes = () => {
+    navigation.navigate("Notification");
+  };
+  const handlePlanilha = () => {
+    navigation.navigate("Planilhas");
+  };
   const handlePlus = () => {};
   const handleGraph = () => {};
-  const handlePerfil = () => {};
+  const handlePerfil = () => {
+    navigation.navigate("Profile");
+  };
+
+  const options = [
+    {
+      id: "1",
+      icon: IconNotification,
+      name: "Notificações",
+      onPress: handleNotificacoes,
+    },
+    { id: "2", icon: IconFile, name: "Planilhas", onPress: handlePlanilha },
+    { id: "3", icon: IconPlus, name: "Criar Planilha", onPress: handlePlus },
+    { id: "4", icon: IconGraph, name: "Gráficos", onPress: handleGraph },
+    { id: "5", icon: IconPerfil, name: "Perfil", onPress: handlePerfil },
+  ];
+
+  const renderItem = ({ item }) => (
+    <ButtonCard Icon={item.icon} name={item.name} onPress={item.onPress} />
+  );
 
   return (
     <View style={styles.container}>
@@ -22,20 +50,14 @@ const HomeScreen = () => {
         <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
       </View>
 
-      <View style={styles.boxOptions}>
-        <ButtonCard
-          Icon={IconFile}
-          name={"Planilhas"}
-          onPress={handlePlanilha}
-        />
-        <ButtonCard
-          Icon={IconPlus}
-          name={"Criar Planilha"}
-          onPress={handlePlus}
-        />
-        <ButtonCard Icon={IconGraph} name={"Gráficos"} onPress={handleGraph} />
-        <ButtonCard Icon={IconPerfil} name={"Perfil"} onPress={handlePerfil} />
-      </View>
+      <FlatList
+        data={options}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false} // Oculta a barra de rolagem
+        contentContainerStyle={styles.boxOptions}
+      />
     </View>
   );
 };
@@ -45,9 +67,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
     paddingTop: 50,
+  },
+  boxRecent: {
     paddingHorizontal: 26,
   },
-  boxRecent: {},
   titleRecent: {
     fontSize: 18,
     fontFamily: "Roboto-Regular",
@@ -56,7 +79,7 @@ const styles = StyleSheet.create({
   },
   boxOptions: {
     marginTop: 40,
-    marginHorizontal: 15,
+    marginLeft: 35,
     flexDirection: "row",
     gap: 12,
   },

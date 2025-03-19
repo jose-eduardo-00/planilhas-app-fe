@@ -1,40 +1,86 @@
 import React, { useRef, useState } from "react";
-import { Keyboard, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Keyboard,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import MainInput from "../../components/inputs/mainInput";
 import MainButton from "../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
+import EditProfileModal from "../../components/modals/editProfileModal";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [income, setIncome] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const [visibleModalEdit, setVisibleModalEdit] = useState(false);
 
   const emailRef = useRef(null);
   const incomeRef = useRef(null);
 
+  // modal de edição
+  const [nameEdit, setNameEdit] = useState("");
+  const [emailEdit, setEmailEdit] = useState("");
+  const [incomeEdit, setIncomeEdit] = useState("");
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+  const [isLoadingModalEdit, setIsLoadingModalEdit] = useState(false);
+  const [incomeVisibleEdit, setIncomeVisibleEdit] = useState(false);
+
+  const emailEditRef = useRef(null);
+  const incomeEditRef = useRef(null);
+
   const navigation = useNavigation();
 
+  const handleEditName = (t) => {
+    setNameEdit(t);
+  };
+
+  const handleName = (t) => {
+    setName(t);
+  };
+
+  const handleEditEmail = (t) => {
+    setEmailEdit(t);
+  };
+
+  const handleEmail = (t) => {
+    setEmail(t);
+  };
+
+  const handleEditIncome = (t) => {
+    setIncomeEdit(t);
+  };
+
+  const handleIncome = (t) => {
+    setIncome(t);
+  };
+
   const handleEdit = () => {
-    setIsLoading(true);
+    setVisibleModalEdit(true);
+  };
 
-    console.log("Perfil atualizado:", {
-      Nome: name,
-      Email: email,
-      "Renda Mensal": income,
-    });
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+  const handleCloseModalEdit = () => {
+    setVisibleModalEdit(false);
   };
 
   const handlePassChange = () => {
     setPasswordVisible(!passwordVisible);
   };
+
+  const handleEditIncomeChange = () => {
+    setIncomeVisibleEdit(!incomeVisibleEdit);
+  };
+
+  const handleEditSalvar = () => {};
 
   return (
     <ScrollView
@@ -42,6 +88,11 @@ const ProfileScreen = () => {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.container}>
+        <StatusBar
+          barStyle={"dark-content"}
+          translucent={true}
+          backgroundColor={Colors.white}
+        />
         <Text style={styles.title}>Perfil</Text>
 
         <View style={styles.avatarContainer}>
@@ -51,7 +102,7 @@ const ProfileScreen = () => {
         <View style={styles.boxInput}>
           <Text style={styles.titleInput}>Nome</Text>
           <MainInput
-            onChange={setName}
+            onChange={(t) => handleName(t)}
             placeholder="example"
             text={name}
             returnKeyType="next"
@@ -63,7 +114,7 @@ const ProfileScreen = () => {
           <Text style={styles.titleInput}>Email</Text>
           <MainInput
             ref={emailRef}
-            onChange={setEmail}
+            onChange={(t) => handleEmail(t)}
             placeholder="email@example.com"
             text={email}
             returnKeyType="next"
@@ -75,8 +126,8 @@ const ProfileScreen = () => {
           <Text style={styles.titleInput}>Renda Mensal</Text>
           <MainInput
             ref={incomeRef}
-            onChange={setIncome}
-            placeholder="R$"
+            onChange={(t) => handleIncome(t)}
+            placeholder="R$ 00,00"
             text={income}
             onSubmitEditing={Keyboard.dismiss}
             isPassword={true}
@@ -93,6 +144,23 @@ const ProfileScreen = () => {
             isLoading={isLoading}
           />
         </View>
+
+        <EditProfileModal
+          visible={visibleModalEdit}
+          onPress={handleCloseModalEdit}
+          isLoading={isLoadingModal}
+          changeName={handleEditName}
+          name={nameEdit}
+          email={emailEdit}
+          emailRef={emailEditRef}
+          changeEmail={handleEditEmail}
+          income={incomeEdit}
+          incomeRef={incomeEditRef}
+          changeIncome={handleEditIncome}
+          handleIncomeChange={handleEditIncomeChange}
+          incomeVisible={incomeVisibleEdit}
+          handleSalvar={handleEditSalvar}
+        />
       </View>
     </ScrollView>
   );
