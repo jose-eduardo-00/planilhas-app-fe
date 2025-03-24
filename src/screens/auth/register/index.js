@@ -19,6 +19,7 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confSenha, setConfSenha] = useState("");
+  const [userId, setUserId] = useState("");
 
   const [senhaVisible, setSenhaVisible] = useState(false);
   const [confSenhaVisible, setConfSenhaVisible] = useState(false);
@@ -94,7 +95,8 @@ const RegisterScreen = () => {
 
   const handleConfSenha = (t) => {
     setConfSenha(t);
-    if (senha == t && t != "") {
+    const regex = /(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9])/;
+    if (senha == t && t != "" && regex.test(t)) {
       setConfSenhaFail(false);
       setSamePass(true);
       setConfSenhaSuccess(true);
@@ -121,60 +123,61 @@ const RegisterScreen = () => {
   };
 
   const handleAlertModal = () => {
-    setVisible(!visible);
+    if (modalSuccess) {
+      setVisible(!visible);
+      navigation.navigate("VerifyCode", {
+        email: email,
+        id: userId,
+        rota: "register",
+      });
+    } else {
+      setVisible(!visible);
+    }
   };
 
   const handleRegister = () => {
     setIsLoading(true);
 
-    console.log("Cadastro ===>", {
-      Nome: name,
-      email: email,
-      senha: senha,
-      confirmarSenha: confSenha,
-    });
-
     if (name == "" && email == "" && senha == "" && confSenha == "") {
       setIsLoading(false);
-      setVisible(true);
       setModalMessage("Preencha todos os campos!");
       setModalSuccess(false);
+      setVisible(true);
+    } else if (senha != confSenha) {
+      setIsLoading(false);
+      setModalSuccess(false);
+      setModalMessage("Os campos de senha e confirmar senha estão diferentes!");
+      setVisible(true);
+    } else if (!senhaSuccess) {
+      setIsLoading(false);
+      setModalSuccess(false);
+      setModalMessage("Senha Inválida!");
+      setVisible(true);
     } else {
       api.createUser(name, email, senha).then((res) => {
         console.log(res.status, res.data);
         if (res.status === 201) {
-          setVisible(true);
+          setUserId(res.data.user.id);
+          setEmailFail(false);
           setModalMessage("Cadastro realizado com sucesso!");
           setModalSuccess(true);
+          setVisible(true);
 
-          setTimeout(() => {
-            // depois colocar pra fazeer login automatica e mandar pra hoem
-            setIsLoading(false);
-            navigation.navigate("Login");
-            // navigation.navigate("VerifyCode", {
-            //   email: email,
-            //   rota: "register",
-            // });
-          }, 3000);
+          setIsLoading(false);
         } else if (res.status === 400) {
           setIsLoading(false);
-          setVisible(true);
           setModalMessage("Já existe uma conta nesse email!");
           setModalSuccess(false);
           setEmailFail(true);
+          setVisible(true);
         } else {
           setIsLoading(false);
-          setVisible(true);
           setModalMessage("Erro de conexão, tente novamente mais tarde!");
           setModalSuccess(false);
+          setVisible(true);
         }
       });
     }
-
-    // setTimeout(() => {
-    //   navigation.navigate("VerifyCode", { email: email, rota: "register" });
-    //   setIsLoading(false);
-    // }, 3000);
   };
 
   return (
@@ -211,6 +214,7 @@ const RegisterScreen = () => {
             onSubmitEditing={() => senhaRef.current?.focus()}
             fail={emailFail}
             success={false}
+            cap={"none"}
           />
         </View>
 
@@ -272,7 +276,7 @@ const RegisterScreen = () => {
           success={modalSuccess}
           onPress={handleAlertModal}
           isLoadingModal={isLoadingModal}
-          textButton={"Entrar"}
+          textButton={"CONTINUAR"}
         />
       </View>
     </ScrollView>

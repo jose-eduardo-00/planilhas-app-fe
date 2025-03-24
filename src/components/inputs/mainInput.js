@@ -23,6 +23,7 @@ const MainInput = forwardRef(
       success,
       maxLength,
       keyboardType,
+      cap,
     },
     ref
   ) => {
@@ -84,6 +85,7 @@ const MainInput = forwardRef(
             blurOnSubmit={false}
             maxLength={maxLength}
             keyboardType={keyboardType}
+            autoCapitalize={cap}
           />
         )}
       </View>

@@ -78,6 +78,7 @@ const LoginScreen = () => {
           text={email}
           returnKeyType="next"
           onSubmitEditing={() => senhaRef.current?.focus()}
+          cap={"none"}
         />
       </View>
 
