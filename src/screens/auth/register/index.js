@@ -11,6 +11,8 @@ import { Colors } from "../../../../constants/colors/colors";
 import MainInput from "../../../components/inputs/mainInput";
 import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
+import api from "../../../../service/api/user/index";
+import AlertModal from "../../../components/modals/alertModal";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -31,7 +33,13 @@ const RegisterScreen = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
   const navigation = useNavigation();
+
+  const [visible, setVisible] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const emailRef = useRef(null);
   const senhaRef = useRef(null);
@@ -42,6 +50,10 @@ const RegisterScreen = () => {
   };
 
   const handleEmail = (t) => {
+    if (emailFail == true) {
+      setEmailFail(false);
+    }
+
     setEmail(t);
   };
 
@@ -108,6 +120,10 @@ const RegisterScreen = () => {
     navigation.navigate("Login");
   };
 
+  const handleAlertModal = () => {
+    setVisible(!visible);
+  };
+
   const handleRegister = () => {
     setIsLoading(true);
 
@@ -118,10 +134,47 @@ const RegisterScreen = () => {
       confirmarSenha: confSenha,
     });
 
-    setTimeout(() => {
-      navigation.navigate("VerifyCode", { email: email, rota: "register" });
+    if (name == "" && email == "" && senha == "" && confSenha == "") {
       setIsLoading(false);
-    }, 3000);
+      setVisible(true);
+      setModalMessage("Preencha todos os campos!");
+      setModalSuccess(false);
+    } else {
+      api.createUser(name, email, senha).then((res) => {
+        console.log(res.status, res.data);
+        if (res.status === 201) {
+          setVisible(true);
+          setModalMessage("Cadastro realizado com sucesso!");
+          setModalSuccess(true);
+
+          setTimeout(() => {
+            // depois colocar pra fazeer login automatica e mandar pra hoem
+            setIsLoading(false);
+            navigation.navigate("Login");
+            // navigation.navigate("VerifyCode", {
+            //   email: email,
+            //   rota: "register",
+            // });
+          }, 3000);
+        } else if (res.status === 400) {
+          setIsLoading(false);
+          setVisible(true);
+          setModalMessage("Já existe uma conta nesse email!");
+          setModalSuccess(false);
+          setEmailFail(true);
+        } else {
+          setIsLoading(false);
+          setVisible(true);
+          setModalMessage("Erro de conexão, tente novamente mais tarde!");
+          setModalSuccess(false);
+        }
+      });
+    }
+
+    // setTimeout(() => {
+    //   navigation.navigate("VerifyCode", { email: email, rota: "register" });
+    //   setIsLoading(false);
+    // }, 3000);
   };
 
   return (
@@ -212,6 +265,15 @@ const RegisterScreen = () => {
         <TouchableOpacity style={styles.boxRegister} onPress={handleLogin}>
           <Text style={styles.textRegister}>já tem conta?</Text>
         </TouchableOpacity>
+
+        <AlertModal
+          visible={visible}
+          message={modalMessage}
+          success={modalSuccess}
+          onPress={handleAlertModal}
+          isLoadingModal={isLoadingModal}
+          textButton={"Entrar"}
+        />
       </View>
     </ScrollView>
   );
