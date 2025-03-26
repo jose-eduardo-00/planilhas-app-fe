@@ -1,7 +1,7 @@
 import { http } from "../../config";
 
 export default {
-  createUser: async (name, email, senha) => {
+  createUser: async (name, email, senha, expoToken) => {
     try {
       const response = await http.post(
         "/users/register",
@@ -10,6 +10,7 @@ export default {
           email: email,
           senha: senha,
           renda_mensal: "00",
+          expoToken: expoToken,
         },
         {
           headers: {

@@ -13,16 +13,25 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Precisamos de acesso à câmera para capturar fotos.",
+        "NSLocationWhenInUseUsageDescription": "Precisamos de acesso à sua localização para melhorar sua experiência.",
+        "NSPhotoLibraryUsageDescription": "Precisamos de acesso à sua galeria para selecionar fotos."
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "android": {
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "READ_EXTERNAL_STORAGE"
+      ],
+      "userInterfaceStyle": "light"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "20669d6b-f740-4cc7-9e94-7de35809a59e"
+      }
     }
   }
 }

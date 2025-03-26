@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -13,6 +14,8 @@ import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../../../service/api/user/index";
 import AlertModal from "../../../components/modals/alertModal";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -41,6 +44,8 @@ const RegisterScreen = () => {
   const [visible, setVisible] = useState(false);
   const [modalSuccess, setModalSuccess] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+
+  const [expoPushToken, setExpoPushToken] = useState(null);
 
   const emailRef = useRef(null);
   const senhaRef = useRef(null);
@@ -154,7 +159,7 @@ const RegisterScreen = () => {
       setModalMessage("Senha Inválida!");
       setVisible(true);
     } else {
-      api.createUser(name, email, senha).then((res) => {
+      api.createUser(name, email, senha, expoPushToken).then((res) => {
         console.log(res.status, res.data);
         if (res.status === 201) {
           setUserId(res.data.user.id);
@@ -179,6 +184,42 @@ const RegisterScreen = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const registerForPushNotifications = async () => {
+      if (Device.isDevice) {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+
+        let finalStatus = existingStatus;
+
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+
+        if (finalStatus !== "granted") {
+          Alert.alert("Permissão necessária", "Habilite as notificações.");
+          return;
+        }
+
+        try {
+          const { data } = await Notifications.getExpoPushTokenAsync();
+          console.log("Expo Push Token:", data);
+          setExpoPushToken(data);
+        } catch (error) {
+          console.error("Erro ao obter o token:", error);
+        }
+      } else {
+        Alert.alert(
+          "Erro",
+          "Notificações só funcionam em dispositivos físicos."
+        );
+      }
+    };
+
+    registerForPushNotifications();
+  }, []);
 
   return (
     <ScrollView
