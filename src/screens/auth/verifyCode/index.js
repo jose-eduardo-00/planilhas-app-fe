@@ -40,7 +40,7 @@ const VerifyCodeScreen = ({ route }) => {
     if (modalSuccess) {
       setVisible(!visible);
       if (rota == "sendEmail") {
-        navigation.navigate("RecoveryPass");
+        navigation.navigate("RecoveryPass", { id: id });
       } else if (rota == "register") {
         navigation.reset({
           routes: [{ name: "Drawer" }],
@@ -53,47 +53,47 @@ const VerifyCodeScreen = ({ route }) => {
 
   const handleRecovery = () => {
     setIsLoading(true);
-    if (rota == "sendEmail") {
-      //terminar quando for fazer a recuperação de senha
-      navigation.navigate("RecoveryPass");
+    // if (rota == "sendEmail") {
+    //   //terminar quando for fazer a recuperação de senha
+    //   navigation.navigate("RecoveryPass");
+    //   setIsLoading(false);
+    // } else if (rota == "register") {
+    if (code == "") {
       setIsLoading(false);
-    } else if (rota == "register") {
-      if (code == "") {
-        setIsLoading(false);
-        setModalMessage("Preencha o campo de código!");
-        setModalSuccess(false);
-        setVisible(true);
-      } else {
-        api.verifyCode(code, id).then((res) => {
-          if (res.status === 200) {
-            setIsLoading(false);
-            setModalMessage("Código verificado com sucesso!");
-            setModalSuccess(true);
-            setVisible(true);
-          } else if (res.status === 400) {
-            setIsLoading(false);
-            setModalMessage(
-              "Código inválido ou expirado, preencha corretamente o campo!"
-            );
-            setModalSuccess(false);
-            setVisible(true);
-          } else if (res.status === 401) {
-            setIsLoading(false);
-            setModalMessage(
-              "Erro ao verificar o código, tente novamente mais tarde!"
-            );
-            setModalSuccess(false);
-            setVisible(true);
-          } else {
-            setIsLoading(false);
-            setModalMessage(
-              "Erro ao verificar o código, tente novamente mais tarde!"
-            );
-            setModalSuccess(false);
-            setVisible(true);
-          }
-        });
-      }
+      setModalMessage("Preencha o campo de código!");
+      setModalSuccess(false);
+      setVisible(true);
+    } else {
+      api.verifyCode(code, id).then((res) => {
+        if (res.status === 200) {
+          setIsLoading(false);
+          setModalMessage("Código verificado com sucesso!");
+          setModalSuccess(true);
+          setVisible(true);
+        } else if (res.status === 400) {
+          setIsLoading(false);
+          setModalMessage(
+            "Código inválido ou expirado, preencha corretamente o campo!"
+          );
+          setModalSuccess(false);
+          setVisible(true);
+        } else if (res.status === 401) {
+          setIsLoading(false);
+          setModalMessage(
+            "Erro ao verificar o código, tente novamente mais tarde!"
+          );
+          setModalSuccess(false);
+          setVisible(true);
+        } else {
+          setIsLoading(false);
+          setModalMessage(
+            "Erro ao verificar o código, tente novamente mais tarde!"
+          );
+          setModalSuccess(false);
+          setVisible(true);
+        }
+      });
+      // }
     }
   };
 

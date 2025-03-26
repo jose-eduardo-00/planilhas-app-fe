@@ -294,7 +294,7 @@ const RegisterScreen = () => {
         </View>
 
         <Text style={styles.textInfo}>
-          {samePass || confSenha == "" || senha == ""
+          {(confSenha == "" && senha == "") || confSenha == senha
             ? "A senha deve conter os seguintes itens: letra, números e símbolos"
             : "Confirmação de senha diferente da senha"}
         </Text>

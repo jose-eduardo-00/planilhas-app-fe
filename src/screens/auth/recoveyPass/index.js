@@ -10,8 +10,10 @@ import { Colors } from "../../../../constants/colors/colors";
 import MainInput from "../../../components/inputs/mainInput";
 import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
+import api from "../../../../service/api/user/index";
+import AlertModal from "../../../components/modals/alertModal";
 
-const RecoveryPassScreen = () => {
+const RecoveryPassScreen = ({ route }) => {
   const [senha, setSenha] = useState("");
   const [confSenha, setConfSenha] = useState("");
   const [senhaVisible, setSenhaVisible] = useState(false);
@@ -25,10 +27,18 @@ const RecoveryPassScreen = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [visible, setVisible] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
   const navigation = useNavigation();
 
   const senhaRef = useRef(null);
   const confSenhaRef = useRef(null);
+
+  const { id } = route.params;
 
   const handleSenha = (t) => {
     setSenha(t);
@@ -67,7 +77,8 @@ const RecoveryPassScreen = () => {
 
   const handleConfSenha = (t) => {
     setConfSenha(t);
-    if (senha == t && t != "") {
+    const regex = /(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9])/;
+    if (senha == t && t != "" && regex.test(t)) {
       setConfSenhaFail(false);
       setSamePass(true);
       setConfSenhaSuccess(true);
@@ -90,7 +101,49 @@ const RecoveryPassScreen = () => {
   };
 
   const handleRecovery = () => {
-    navigation.navigate("Login");
+    setIsLoading(true);
+    if (senha == "") {
+      setIsLoading(false);
+      setModalSuccess(false);
+      setModalMessage("Campo de senha vazia, preencha o campo!");
+      setVisible(true);
+    } else if (senha != confSenha) {
+      setIsLoading(false);
+      setModalSuccess(false);
+      setModalMessage("Campo de confirmar senha diferente da senha!");
+      setVisible(true);
+    } else if (!senhaSuccess) {
+      setIsLoading(false);
+      setModalSuccess(false);
+      setModalMessage(
+        "A senha não segue o padrão de segurança, preencha de acordo!"
+      );
+      setVisible(true);
+    } else {
+      api.changePassword(id, senha).then((res) => {
+        console.log(res.status, res.data);
+        if (res.status === 200) {
+          setIsLoading(false);
+          setModalSuccess(true);
+          setModalMessage("Senha atualizada com sucesso!");
+          setVisible(true);
+        } else {
+          setIsLoading(false);
+          setModalSuccess(false);
+          setModalMessage("Erro de conexão, tente novamente mais tarde!");
+          setVisible(true);
+        }
+      });
+    }
+  };
+
+  const handleAlertModal = () => {
+    if (modalSuccess) {
+      setVisible(!visible);
+      navigation.navigate("Login");
+    } else {
+      setVisible(!visible);
+    }
   };
 
   return (
@@ -131,7 +184,7 @@ const RecoveryPassScreen = () => {
         />
       </View>
       <Text style={styles.textInfo}>
-        {samePass || confSenha == "" || senha == ""
+        {(confSenha == "" && senha == "") || confSenha == senha
           ? "A senha deve conter os seguintes itens: letra, números e símbolos"
           : "Confirmação de senha diferente da senha"}
       </Text>
@@ -143,6 +196,15 @@ const RecoveryPassScreen = () => {
           isLoading={isLoading}
         />
       </View>
+
+      <AlertModal
+        visible={visible}
+        message={modalMessage}
+        success={modalSuccess}
+        onPress={handleAlertModal}
+        isLoadingModal={isLoadingModal}
+        textButton={"CONTINUAR"}
+      />
     </View>
   );
 };
