@@ -11,27 +11,34 @@ import MainInput from "../../../components/inputs/mainInput";
 import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import AlertModal from "../../../components/modals/alertModal";
+import api from "../../../../service/api/auth/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+
   const [senhaVisible, setSenhaVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+
   const [visible, setVisible] = useState(false);
   const [modalSuccess, setModalSuccess] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  const navigation = useNavigation();
+  const [emailFail, setEmailFail] = useState(false);
+  const [senhaFail, setSenhaFail] = useState(false);
 
+  const navigation = useNavigation();
   const senhaRef = useRef(null);
 
   const handleEmail = (t) => {
+    setEmailFail(false);
     setEmail(t);
   };
 
   const handleSenha = (t) => {
+    setSenhaFail(false);
     setSenha(t);
   };
 
@@ -47,20 +54,56 @@ const LoginScreen = () => {
     navigation.navigate("SendEmail");
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setIsLoading(true);
-
-    console.log("Email ===>", email);
-    console.log("Senha ===>", senha);
-
-    setTimeout(() => {
-      navigation.navigate("Drawer");
-      // setVisible(true);
-      // setModalMessage("Teste de mensagem");
-      // setModalSuccess(!modalSuccess);
+  
+    if (email === "" || senha === "") {
       setIsLoading(false);
-    }, 3000);
+      setModalMessage("Preencha todos os campos!");
+      setModalSuccess(false);
+      setVisible(true);
+      setEmailFail(email === "");
+      setSenhaFail(senha === "");
+      return;
+    }
+  
+    try {
+      const response = await api.loginUser(email, senha);
+      console.log(response.status, response.data);
+  
+      if (response.status === 200) {
+        await AsyncStorage.setItem("token", response.data.token);
+        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+  
+        setModalMessage("Login realizado com sucesso!");
+        setModalSuccess(true);
+        setVisible(true);
+  
+        setTimeout(() => {
+          navigation.navigate("Drawer");
+          setVisible(false);
+        }, 2000);
+      } else if (response.status === 401) {
+        setModalMessage("Email ou senha inválidos!");
+        setModalSuccess(false);
+        setEmailFail(true);
+        setSenhaFail(true);
+        setVisible(true);
+      } else {
+        setModalMessage("Erro de conexão, tente novamente mais tarde!");
+        setModalSuccess(false);
+        setVisible(true);
+      }
+    } catch (error) {
+      console.error("Erro inesperado:", error);
+      setModalMessage("Erro ao conectar. Tente novamente.");
+      setModalSuccess(false);
+      setVisible(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
 
   const handleAlertModal = () => {
     setVisible(!visible);
@@ -71,6 +114,7 @@ const LoginScreen = () => {
       <Text style={styles.title}>Login</Text>
 
       <View style={styles.boxInput}>
+        <Text style={styles.titleInput}>Email</Text>
         <MainInput
           onChange={handleEmail}
           placeholder={"Email"}
@@ -79,10 +123,13 @@ const LoginScreen = () => {
           returnKeyType="next"
           onSubmitEditing={() => senhaRef.current?.focus()}
           cap={"none"}
+          fail={emailFail}
+          success={false}
         />
       </View>
 
       <View style={styles.boxInput1}>
+        <Text style={styles.titleInput}>Senha</Text>
         <MainInput
           ref={senhaRef}
           onChange={handleSenha}
@@ -93,23 +140,25 @@ const LoginScreen = () => {
           isPasswordChange={handleVisibleSenha}
           returnKeyType="done"
           onSubmitEditing={Keyboard.dismiss}
+          fail={senhaFail}
+          success={false}
         />
       </View>
 
       <TouchableOpacity style={styles.boxforgotPass} onPress={handleForgotPass}>
-        <Text style={styles.textforgotPass}>esqueceu sua senha?</Text>
+        <Text style={styles.textforgotPass}>Esqueceu sua senha?</Text>
       </TouchableOpacity>
 
       <View style={styles.boxButton}>
-        <MainButton
-          text={"LOGIN"}
-          onPress={handleLogin}
-          isLoading={isLoading}
+        <MainButton 
+        text={"LOGIN"} 
+        onPress={handleLogin} 
+        isLoading={isLoading} 
         />
       </View>
 
       <TouchableOpacity style={styles.boxRegister} onPress={handleRegister}>
-        <Text style={styles.textRegister}>ainda não tem conta?</Text>
+        <Text style={styles.textRegister}>Ainda não tem conta?</Text>
       </TouchableOpacity>
 
       <AlertModal
@@ -138,6 +187,13 @@ const styles = StyleSheet.create({
   },
   boxInput: {
     marginTop: 60,
+  },
+  titleInput: {
+    paddingLeft: 8,
+    marginBottom: 8,
+    fontSize: 15,
+    fontFamily: "Roboto-Regular",
+    color: Colors.black,
   },
   boxInput1: {
     marginTop: 20,

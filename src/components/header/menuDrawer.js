@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
@@ -6,15 +6,63 @@ import IconPlanilha from "../../../assets/icon/planilhaIcon.svg";
 import IconDados from "../../../assets/icon/dadosIcon.svg";
 import IconConfig from "../../../assets/icon/configIcon.svg";
 import { Colors } from "../../../constants/colors/colors";
+import MainButton from "../buttons/mainButton";
+import api from "../../../service/api/auth/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MenuDrawer = () => {
   const navigation = useNavigation();
+  const [userName, setUserName] = useState("");
+
+  // carrega os dados do usuário
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const user = await AsyncStorage.getItem("user");
+        if (user) {
+          const parsedUser = JSON.parse(user);
+          setUserName(parsedUser.name);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
+  //remove o token e faz o logout
+  const handleLogout = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const user = await AsyncStorage.getItem("user");
+  
+      if (token && user) {
+        const parsedUser = JSON.parse(user);
+        const userId = parsedUser.id;
+  
+        // logout do backend
+        const response = await api.logout(userId, token);
+        console.log("Logout no servidor:", response);
+  
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("user");
+  
+        navigation.reset({
+          routes: [{ name: "Login" }],
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      alert("Falha ao tentar sair!");
+    }
+  };  
 
   return (
     <View style={styles.container}>
       <View style={styles.boxPerfil}>
         <View>
-          <Text style={styles.name}>Marcos</Text>
+          <Text style={styles.name}>{userName || "Usuário"}</Text>
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
             <Text style={styles.textPerfil}>Ver perfil</Text>
           </TouchableOpacity>
@@ -44,6 +92,11 @@ const MenuDrawer = () => {
         <IconConfig />
         <Text style={styles.textOption}>Configurações</Text>
       </TouchableOpacity>
+
+      {/* btn logout*/}
+      <View style={styles.boxButton}>
+        <MainButton text="Sair" onPress={handleLogout} />
+      </View>
     </View>
   );
 };
@@ -95,6 +148,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Roboto-Regular",
     color: Colors.black,
+  },
+  boxButton: {
+    marginTop: 400,
+    alignItems: "center",
+    width: "100%",
+    height: 52,
   },
 });
 
