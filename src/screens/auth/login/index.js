@@ -56,7 +56,7 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     setIsLoading(true);
-  
+
     if (email === "" || senha === "") {
       setIsLoading(false);
       setModalMessage("Preencha todos os campos!");
@@ -66,23 +66,18 @@ const LoginScreen = () => {
       setSenhaFail(senha === "");
       return;
     }
-  
+
     try {
       const response = await api.loginUser(email, senha);
-      console.log(response.status, response.data);
-  
+      console.log(response, response.data);
+
       if (response.status === 200) {
         await AsyncStorage.setItem("token", response.data.token);
         await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-  
+
         setModalMessage("Login realizado com sucesso!");
         setModalSuccess(true);
         setVisible(true);
-  
-        setTimeout(() => {
-          navigation.navigate("Drawer");
-          setVisible(false);
-        }, 2000);
       } else if (response.status === 401) {
         setModalMessage("Email ou senha inválidos!");
         setModalSuccess(false);
@@ -103,10 +98,14 @@ const LoginScreen = () => {
       setIsLoading(false);
     }
   };
-  
 
   const handleAlertModal = () => {
-    setVisible(!visible);
+    if (modalSuccess) {
+      setVisible(!visible);
+      navigation.navigate("Drawer");
+    } else {
+      setVisible(!visible);
+    }
   };
 
   return (
@@ -150,10 +149,10 @@ const LoginScreen = () => {
       </TouchableOpacity>
 
       <View style={styles.boxButton}>
-        <MainButton 
-        text={"LOGIN"} 
-        onPress={handleLogin} 
-        isLoading={isLoading} 
+        <MainButton
+          text={"LOGIN"}
+          onPress={handleLogin}
+          isLoading={isLoading}
         />
       </View>
 

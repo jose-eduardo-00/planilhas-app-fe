@@ -9,10 +9,17 @@ import { Colors } from "../../../constants/colors/colors";
 import MainButton from "../buttons/mainButton";
 import api from "../../../service/api/auth/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AlertModal from "../modals/alertModal";
 
 const MenuDrawer = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   // carrega os dados do usuário
   useEffect(() => {
@@ -33,30 +40,45 @@ const MenuDrawer = () => {
 
   //remove o token e faz o logout
   const handleLogout = async () => {
+    setIsLoading(true);
+
     try {
       const token = await AsyncStorage.getItem("token");
       const user = await AsyncStorage.getItem("user");
-  
+
       if (token && user) {
         const parsedUser = JSON.parse(user);
         const userId = parsedUser.id;
-  
+
         // logout do backend
         const response = await api.logout(userId, token);
         console.log("Logout no servidor:", response);
-  
-        await AsyncStorage.removeItem("token");
-        await AsyncStorage.removeItem("user");
-  
-        navigation.reset({
-          routes: [{ name: "Login" }],
-        });
+
+        if (response.status === 200) {
+          setIsLoading(false);
+
+          await AsyncStorage.removeItem("token");
+          await AsyncStorage.removeItem("user");
+
+          navigation.reset({
+            routes: [{ name: "Login" }],
+          });
+        } else {
+          setIsLoading(false);
+          setModalMessage("Preencha todos os campos!");
+          setModalSuccess(false);
+          setVisible(true);
+        }
       }
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       alert("Falha ao tentar sair!");
     }
-  };  
+  };
+
+  const handleAlertModal = () => {
+    setVisible(!visible);
+  };
 
   return (
     <View style={styles.container}>
@@ -95,8 +117,17 @@ const MenuDrawer = () => {
 
       {/* btn logout*/}
       <View style={styles.boxButton}>
-        <MainButton text="Sair" onPress={handleLogout} />
+        <MainButton text="Sair" onPress={handleLogout} isLoading={isLoading} />
       </View>
+
+      <AlertModal
+        visible={visible}
+        message={modalMessage}
+        success={modalSuccess}
+        onPress={handleAlertModal}
+        isLoadingModal={isLoadingModal}
+        textButton={"Entrar"}
+      />
     </View>
   );
 };
@@ -150,7 +181,9 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   boxButton: {
-    marginTop: 400,
+    position: "absolute",
+    bottom: 20,
+    alignSelf: "center",
     alignItems: "center",
     width: "100%",
     height: 52,

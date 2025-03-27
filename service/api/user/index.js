@@ -71,4 +71,27 @@ export default {
       return error.response || error.message || error;
     }
   },
+  updateBaseDate: async (id, salario, outras_fontes) => {
+    try {
+      const response = await http.put(
+        `/users/update-data/${id}`,
+        {
+          salario: salario,
+          outras_fontes: outras_fontes,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT",
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      return error.response || error.message || error;
+    }
+  },
 };
