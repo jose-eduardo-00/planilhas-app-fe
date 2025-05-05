@@ -1,12 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, StatusBar, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import MainInput from "../../components/inputs/mainInput";
 import MainButton from "../../components/buttons/mainButton";
 import AlertModal from "../../components/modals/alertModal";
+import api from "../../../service/api/planilha/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const AddPlanilhaScreen = () => {
   const [name, setName] = useState("");
+  const [user, setUser] = useState(null);
 
   const [nameFail, setNameFail] = useState(false);
 
@@ -19,14 +23,57 @@ const AddPlanilhaScreen = () => {
   const [modalAlertSuccess, setModalAlertSuccess] = useState(false);
   const [modalAlertMessage, setModalAlertMessage] = useState("");
 
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const user = await AsyncStorage.getItem("user");
+        if (user) {
+          const parsedUser = JSON.parse(user);
+          setUser(parsedUser);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
+  const navigation = useNavigation();
+
   const handleName = (t) => {
     setName(t);
   };
 
   const handleSalvar = () => {
-    setModalAlertSuccess(true);
-    setModalAlertMessage("Planilha salva com sucesso!");
-    setModalAlertVisible(true);
+    setIsLoading(true);
+    if (name == "") {
+      setIsLoading(false);
+      setModalAlertSuccess(false);
+      setModalAlertMessage("Preencha o campo de nome!");
+      setModalAlertVisible(true);
+    } else {
+      api.createPlanilha(user.id, name).then((res) => {
+        console.log(res.status, res.data);
+        if (res.status === 201) {
+          setIsLoading(false);
+          setModalAlertSuccess(true);
+          setModalAlertMessage("Planilha criada com sucesso!");
+          setModalAlertVisible(true);
+          setName("");
+
+          setTimeout(() => {
+            setModalAlertVisible(false);
+            navigation.navigate("PlanilhaPreview", { id: res.data.id });
+          }, 2000);
+        } else {
+          setIsLoading(false);
+          setModalAlertSuccess(false);
+          setModalAlertMessage("Ocorreu um erro, tente novamente mais tarde!");
+          setModalAlertVisible(true);
+        }
+      });
+    }
   };
 
   const handleCloseModalAlert = () => {
@@ -72,7 +119,7 @@ const AddPlanilhaScreen = () => {
         success={modalAlertSuccess}
         onPress={handleCloseModalAlert}
         isLoadingModal={isLoadingModalAlert}
-        textButton={"CONTINUAR"}
+        textButton={modalAlertSuccess ? "CONTINUAR" : "FECHAR"}
       />
     </View>
   );

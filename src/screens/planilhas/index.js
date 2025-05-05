@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StatusBar,
@@ -11,14 +11,51 @@ import { Colors } from "../../../constants/colors/colors";
 import IconFilter from "../../../assets/icon/filterIcon.svg";
 import MainCard from "../../components/cards/mainCard";
 import MenuBottomModal from "../../components/modals/menuBottomModal";
+import api from "../../../service/api/planilha/index";
+import { useNavigation } from "@react-navigation/native";
 
 const PlanilhasScreen = () => {
   const [visible, setVisible] = useState(false);
 
   const [textName, setTextName] = useState("");
   const [textYear, setTextYear] = useState("");
+  const [visibleCount, setVisibleCount] = useState(2);
+  const [visibleCountTemp, setVisibleCountTemp] = useState(2);
+
+  const [planilhas, setPlanilhas] = useState(null);
+
+  const navigation = useNavigation();
+
+  const handleGetPlanilhas = () => {
+    api.getPlanilhas().then((res) => {
+      if (res.status === 200) {
+        setPlanilhas(res.data);
+      }
+    });
+  };
+
+  const getFilteredPlanilhas = () => {
+    if (!planilhas) return [];
+
+    const filtered = planilhas.filter((item) =>
+      item.nome.toLowerCase().includes(textName.toLowerCase())
+    );
+
+    return filtered.slice(0, visibleCount);
+  };
+
+  useEffect(() => {
+    handleGetPlanilhas();
+  }, []);
 
   const handleChangeTextName = (t) => {
+    console.log(visibleCountTemp);
+    if (t != "") {
+      setVisibleCountTemp(visibleCount);
+      setVisibleCount(planilhas.length);
+    } else {
+      setVisibleCount(visibleCountTemp);
+    }
     setTextName(t);
   };
 
@@ -28,6 +65,10 @@ const PlanilhasScreen = () => {
 
   const handleVisibleModal = () => {
     setVisible(!visible);
+  };
+
+  const handlePlanilha = (item) => {
+    navigation.navigate("PlanilhaPreview", { id: item.id });
   };
 
   return (
@@ -48,14 +89,32 @@ const PlanilhasScreen = () => {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
-        <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
-        <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
-        <MainCard name={"Nome da planilha"} date={"20/01/2001"} />
+        {planilhas &&
+          planilhas
+            .filter((item) =>
+              item.nome.toLowerCase().includes(textName.toLowerCase())
+            )
+            .slice(0, visibleCount)
+            .map((item) => (
+              <MainCard
+                key={item.id}
+                name={item.nome}
+                date={item.createdAt}
+                onPress={() => handlePlanilha(item)}
+              />
+            ))}
 
-        <TouchableOpacity style={styles.buttonMore}>
-          <Text style={styles.textMore}>Ver mais</Text>
-        </TouchableOpacity>
+        {planilhas &&
+          planilhas.filter((item) =>
+            item.nome.toLowerCase().includes(textName.toLowerCase())
+          ).length > visibleCount && (
+            <TouchableOpacity
+              style={styles.buttonMore}
+              onPress={() => setVisibleCount((prev) => prev + 1)}
+            >
+              <Text style={styles.textMore}>Ver mais</Text>
+            </TouchableOpacity>
+          )}
       </ScrollView>
 
       <MenuBottomModal

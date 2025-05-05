@@ -26,7 +26,8 @@
         "ACCESS_FINE_LOCATION",
         "READ_EXTERNAL_STORAGE"
       ],
-      "userInterfaceStyle": "light"
+      "userInterfaceStyle": "light",
+      "package": "com.joseeduardo00.planilhaappfe"
     },
     "extra": {
       "eas": {

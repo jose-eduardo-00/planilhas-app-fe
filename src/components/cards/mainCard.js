@@ -3,13 +3,15 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 
 const MainCard = ({ name, date, onPress }) => {
+  const formatDate = new Date(date).toLocaleDateString("pt-BR");
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.boxName}>
         <Text style={styles.name}>{name}</Text>
       </View>
       <View style={styles.boxDate}>
-        <Text style={styles.date}>{date}</Text>
+        <Text style={styles.date}>{formatDate}</Text>
       </View>
     </TouchableOpacity>
   );

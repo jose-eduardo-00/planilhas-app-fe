@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  BackHandler,
   FlatList,
   ScrollView,
   StatusBar,
@@ -13,9 +14,15 @@ import SecondButton from "../../components/buttons/secondButton";
 import PlusButton from "../../components/buttons/plusButton";
 import ResumoModal from "../../components/modals/resumoModal";
 import AddRowPlanilhaModal from "../../components/modals/addRowPLanilhaModal";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import api from "../../../service/api/planilha/index";
 
 const PlanilhaPreviewScreen = () => {
+  const [planilha, setPlanilha] = useState(null);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [isLoadingResumo, setIsLoadingResumo] = useState(false);
   const [isLoadingPlus, setIsLoadingPlus] = useState(false);
@@ -46,7 +53,42 @@ const PlanilhaPreviewScreen = () => {
   const dateRef = useRef(null);
   const valueRef = useRef(null);
 
+  const route = useRoute();
+
   const navigation = useNavigation();
+
+  const { id } = route.params;
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const onBackPress = () => {
+  //       navigation.reset({
+  //         routes: [{ name: "Drawer" }],
+  //       });
+  //       return true;
+  //     };
+
+  //     const backHandler = BackHandler.addEventListener(
+  //       "hardwareBackPress",
+  //       onBackPress
+  //     );
+
+  //     return () => backHandler.remove(); // <-- corrigido aqui
+  //   }, [])
+  // );
+
+  const handleGetPlanilha = () => {
+    api.getPlanilhaById(id).then((res) => {
+      console.log(res.data);
+      if (res.status === 200) {
+        setPlanilha(res.data);
+      }
+    });
+  };
+
+  useEffect(() => {
+    handleGetPlanilha();
+  }, []);
 
   const handleEdit = () => {
     navigation.navigate("PlanilhaEdit");
@@ -131,7 +173,7 @@ const PlanilhaPreviewScreen = () => {
         backgroundColor={Colors.white}
       />
       <View style={styles.boxTitle}>
-        <Text style={styles.title}>Nome da Planilha</Text>
+        <Text style={styles.title}>{planilha && planilha.nome}</Text>
       </View>
 
       <ScrollView

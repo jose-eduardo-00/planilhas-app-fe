@@ -43,7 +43,7 @@ const VerifyCodeScreen = ({ route }) => {
         navigation.navigate("RecoveryPass", { id: id });
       } else if (rota == "register") {
         navigation.reset({
-          routes: [{ name: "Drawer" }],
+          routes: [{ name: "Login" }],
         });
       }
     } else {

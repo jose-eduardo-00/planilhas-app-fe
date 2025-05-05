@@ -14,8 +14,8 @@ import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../../../service/api/user/index";
 import AlertModal from "../../../components/modals/alertModal";
-import * as Notifications from "expo-notifications";
-import * as Device from "expo-device";
+// import * as Notifications from "expo-notifications";
+// import * as Device from "expo-device";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -185,41 +185,42 @@ const RegisterScreen = () => {
     }
   };
 
-  useEffect(() => {
-    const registerForPushNotifications = async () => {
-      if (Device.isDevice) {
-        const { status: existingStatus } =
-          await Notifications.getPermissionsAsync();
+  // voltar quando for buildar
+  // useEffect(() => {
+  //   const registerForPushNotifications = async () => {
+  //     if (Device.isDevice) {
+  //       const { status: existingStatus } =
+  //         await Notifications.getPermissionsAsync();
 
-        let finalStatus = existingStatus;
+  //       let finalStatus = existingStatus;
 
-        if (existingStatus !== "granted") {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
+  //       if (existingStatus !== "granted") {
+  //         const { status } = await Notifications.requestPermissionsAsync();
+  //         finalStatus = status;
+  //       }
 
-        if (finalStatus !== "granted") {
-          Alert.alert("Permissão necessária", "Habilite as notificações.");
-          return;
-        }
+  //       if (finalStatus !== "granted") {
+  //         Alert.alert("Permissão necessária", "Habilite as notificações.");
+  //         return;
+  //       }
 
-        try {
-          const { data } = await Notifications.getExpoPushTokenAsync();
-          console.log("Expo Push Token:", data);
-          setExpoPushToken(data);
-        } catch (error) {
-          console.error("Erro ao obter o token:", error);
-        }
-      } else {
-        Alert.alert(
-          "Erro",
-          "Notificações só funcionam em dispositivos físicos."
-        );
-      }
-    };
+  //       try {
+  //         const { data } = await Notifications.getExpoPushTokenAsync();
+  //         console.log("Expo Push Token:", data);
+  //         setExpoPushToken(data);
+  //       } catch (error) {
+  //         console.error("Erro ao obter o token:", error);
+  //       }
+  //     } else {
+  //       Alert.alert(
+  //         "Erro",
+  //         "Notificações só funcionam em dispositivos físicos."
+  //       );
+  //     }
+  //   };
 
-    registerForPushNotifications();
-  }, []);
+  //   registerForPushNotifications();
+  // }, []);
 
   return (
     <ScrollView
@@ -266,7 +267,7 @@ const RegisterScreen = () => {
             onChange={handleSenha}
             placeholder={"Senha"}
             isPassword={true}
-            isPasswordVisible={senhaVisible}
+            isPasswordVisible={!senhaVisible}
             text={senha}
             isPasswordChange={handleVisibleSenha}
             returnKeyType="next"
@@ -283,7 +284,7 @@ const RegisterScreen = () => {
             onChange={handleConfSenha}
             placeholder={"Confirmar Senha"}
             isPassword={true}
-            isPasswordVisible={confSenhaVisible}
+            isPasswordVisible={!confSenhaVisible}
             text={confSenha}
             isPasswordChange={handleVisibleConfSenha}
             returnKeyType="done"

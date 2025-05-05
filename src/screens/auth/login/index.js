@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import {
   Keyboard,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -110,6 +111,11 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle={"dark-content"}
+        translucent={true}
+        backgroundColor={Colors.white}
+      />
       <Text style={styles.title}>Login</Text>
 
       <View style={styles.boxInput}>
@@ -134,7 +140,7 @@ const LoginScreen = () => {
           onChange={handleSenha}
           placeholder={"Senha"}
           isPassword={true}
-          isPasswordVisible={senhaVisible}
+          isPasswordVisible={!senhaVisible}
           text={senha}
           isPasswordChange={handleVisibleSenha}
           returnKeyType="done"
