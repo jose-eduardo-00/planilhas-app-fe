@@ -10,6 +10,7 @@ import {
 import { Colors } from "../../../constants/colors/colors";
 import MainButton from "../buttons/mainButton";
 import MainInput from "../inputs/mainInput";
+import MainSelect from "../inputs/selectInput";
 
 const AddRowPlanilhaModal = ({
   visible,
@@ -68,7 +69,7 @@ const AddRowPlanilhaModal = ({
           <View style={styles.boxTwoInput}>
             <View style={styles.boxInput1}>
               <Text style={styles.titleInput}>Tipo</Text>
-              <MainInput
+              {/* <MainInput
                 ref={typeRef}
                 onChange={(t) => changeType(t)}
                 placeholder={"Fixa ou variável"}
@@ -78,21 +79,30 @@ const AddRowPlanilhaModal = ({
                 onSubmitEditing={() => dateRef.current?.focus()}
                 fail={typeFail}
                 success={typeSuccess}
+              /> */}
+              <MainSelect
+                value={type}
+                onChange={(value) => changeType(value)}
+                options={["Fixa", "Variável"]}
+                fail={typeFail}
+                success={typeSuccess}
               />
             </View>
 
-            <View style={styles.boxInput1}>
-              <Text style={styles.titleInput}>Data</Text>
+            <View style={styles.boxInput2}>
+              <Text style={styles.titleInput}>Vencimento</Text>
               <MainInput
                 ref={dateRef}
                 onChange={(t) => changeDate(t)}
-                placeholder={"20/01/2001"}
+                placeholder={"00/00/0000"}
                 isPassword={false}
                 text={date}
                 returnKeyType="next"
                 onSubmitEditing={() => valueRef.current?.focus()}
                 fail={dateFail}
                 success={dateSuccess}
+                keyboardType={"number-pad"}
+                maxLength={10}
               />
             </View>
           </View>
@@ -109,15 +119,21 @@ const AddRowPlanilhaModal = ({
               onSubmitEditing={Keyboard.dismiss}
               fail={valueFail}
               success={valueSuccess}
+              keyboardType={"number-pad"}
             />
           </View>
 
-          <View style={styles.boxButton}>
-            <MainButton
-              onPress={handleSalvar}
-              isLoading={isLoadingModal}
-              text={textButton}
-            />
+          <View style={styles.buttonBox}>
+            <View style={styles.boxButton}>
+              <MainButton onPress={onPress} isLoading={false} text={"FECHAR"} />
+            </View>
+            <View style={styles.boxButton}>
+              <MainButton
+                onPress={handleSalvar}
+                isLoading={isLoadingModal}
+                text={textButton}
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -157,7 +173,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   boxInput1: {
-    width: "48%",
+    width: "52%",
+  },
+  boxInput2: {
+    width: "44%",
   },
   buttonText: {
     color: Colors.white,
@@ -165,10 +184,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   boxButton: {
-    marginTop: 20,
     alignItems: "center",
+    width: "48%",
+    height: 44,
+  },
+  buttonBox: {
+    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     width: "100%",
-    height: 52,
+    height: 44,
   },
 });
 

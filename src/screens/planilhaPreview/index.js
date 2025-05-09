@@ -20,9 +20,14 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import api from "../../../service/api/planilha/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PlanilhaPreviewScreen = () => {
+  const [user, setUser] = useState(null);
   const [planilha, setPlanilha] = useState(null);
+  const [valorTotal, setValorTotal] = useState(0);
+  const [saldo, setSaldo] = useState(0);
+  const [renda, setRenda] = useState(0);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [isLoadingResumo, setIsLoadingResumo] = useState(false);
   const [isLoadingPlus, setIsLoadingPlus] = useState(false);
@@ -77,18 +82,48 @@ const PlanilhaPreviewScreen = () => {
   //   }, [])
   // );
 
+  const formatCurrencyValue = (value) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const handleToken = async () => {
+    const user = await AsyncStorage.getItem("user");
+
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      setUser(parsedUser);
+      setRenda(parsedUser.renda_mensal);
+    } else {
+      return;
+    }
+  };
+
   const handleGetPlanilha = () => {
     api.getPlanilhaById(id).then((res) => {
-      console.log(res.data);
       if (res.status === 200) {
-        setPlanilha(res.data);
+        setPlanilha(res.data.planilha);
+        setValorTotal(res.data.valorTotalFormatado);
       }
     });
   };
 
   useEffect(() => {
     handleGetPlanilha();
+
+    handleToken();
   }, []);
+
+  useEffect(() => {
+    if (renda && valorTotal !== 0) {
+      const saldo = renda - valorTotal;
+
+      setSaldo(saldo);
+    }
+  }, [renda, valorTotal]);
 
   const handleEdit = () => {
     navigation.navigate("PlanilhaEdit");
@@ -107,13 +142,130 @@ const PlanilhaPreviewScreen = () => {
   };
 
   const handleModalAdd = () => {
+    if (
+      name == "" ||
+      type == "" ||
+      date.length < 10 ||
+      value == "" ||
+      value === "R$ 0,00"
+    ) {
+      setName("");
+      setType("");
+      setDate("");
+      setValue("");
+      setValueFail(false);
+      setValueSuccess(false);
+      setDateFail(false);
+      setDateSuccess(false);
+      setTypeFail(false);
+      setTypeSuccess(false);
+      setNameFail(false);
+      setNameSuccess(false);
+    }
     setModalVisibleAdd(!modalVisibleAdd);
   };
 
   const handleSalvarConta = () => {
-    //por enquanto so fecha o modal
+    setIsLoadingModalAdd(true);
 
-    setModalVisibleAdd(!modalVisibleAdd);
+    if (
+      name == "" ||
+      type == "" ||
+      date.length < 10 ||
+      value == "" ||
+      value === "R$ 0,00"
+    ) {
+      if (name == "") {
+        setNameSuccess(false);
+        setNameFail(true);
+      } else {
+        setNameFail(false);
+        setNameSuccess(true);
+      }
+      if (type == "") {
+        setTypeSuccess(false);
+        setTypeFail(true);
+      } else {
+        setTypeFail(false);
+        setTypeSuccess(true);
+      }
+      if (date.length < 10) {
+        setDateSuccess(false);
+        setDateFail(true);
+      } else {
+        setDateFail(false);
+        setDateSuccess(true);
+      }
+      if (value == "" || value === "R$ 0,00") {
+        setValueSuccess(false);
+        setValueFail(true);
+      } else {
+        setValueFail(false);
+        setValueSuccess(true);
+      }
+
+      setIsLoadingModalAdd(false);
+    } else {
+      const convertToISO = (dateStr) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month}-${day}`;
+      };
+      const normalizeCurrency = (val) => {
+        return Number(
+          val.replace("R$ ", "").replace(".", "").replace(",", ".")
+        );
+      };
+
+      //campos
+      setValueFail(false);
+      setValueSuccess(true);
+      setDateFail(false);
+      setDateSuccess(true);
+      setTypeFail(false);
+      setTypeSuccess(true);
+      setNameFail(false);
+      setNameSuccess(true);
+
+      api
+        .createLinha(
+          name,
+          type,
+          convertToISO(date),
+          normalizeCurrency(value),
+          planilha.id
+        )
+        .then((res) => {
+          if (res.status === 201) {
+            handleGetPlanilha();
+            setIsLoadingModalAdd(false);
+            setModalVisibleAdd(!modalVisibleAdd);
+
+            setName("");
+            setType("");
+            setDate("");
+            setValue("");
+            setValueFail(false);
+            setValueSuccess(false);
+            setDateFail(false);
+            setDateSuccess(false);
+            setTypeFail(false);
+            setTypeSuccess(false);
+            setNameFail(false);
+            setNameSuccess(false);
+          } else {
+            setIsLoadingModalAdd(false);
+
+            setValueFail(true);
+            setValueSuccess(false);
+            setDateFail(true);
+            setDateSuccess(false);
+            setTypeFail(true);
+            setTypeSuccess(false);
+            setNameFail(true);
+            setNameSuccess(false);
+          }
+        });
+    }
   };
 
   const handleName = (t) => {
@@ -125,45 +277,85 @@ const PlanilhaPreviewScreen = () => {
   };
 
   const handleDate = (t) => {
-    setDate(t);
+    // Remove tudo que não for número
+    let cleaned = t.replace(/\D/g, "");
+
+    // Limita a 8 dígitos
+    if (cleaned.length > 8) {
+      cleaned = cleaned.slice(0, 8);
+    }
+
+    // Adiciona as barras conforme digita
+    if (cleaned.length >= 5) {
+      cleaned = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(
+        4
+      )}`;
+    } else if (cleaned.length >= 3) {
+      cleaned = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+    }
+
+    setDate(cleaned);
   };
 
   const handleValue = (t) => {
-    setValue(t);
+    // Remove tudo que não for número
+    const cleaned = t.replace(/\D/g, "");
+
+    // Converte para centavos e formata
+    const number = (Number(cleaned) / 100).toFixed(2);
+
+    // Formata com separador de milhar e "R$"
+    const formatted = "R$ " + number.replace(".", ",");
+
+    setValue(formatted);
   };
 
-  const data = [
-    {
-      id: "1",
-      nome: "Nome da conta",
-      vencimento: "20/01/2023",
-      tipo: "Mensal",
-      valor: "R$ 150,00",
-    },
-    {
-      id: "2",
-      nome: "Planilha 2",
-      vencimento: "15/02/2023",
-      tipo: "Anual",
-      valor: "R$ 300,00",
-    },
-    {
-      id: "3",
-      nome: "Planilha 3",
-      vencimento: "10/03/2023",
-      tipo: "Único",
-      valor: "R$ 200,00",
-    },
-  ];
+  const formatDate = (dateString) => {
+    const [year, month, day] = dateString.split("T")[0].split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatCurrency = (value) => {
+    if (typeof value === "string") {
+      // Se já começa com "R$", retorna como está
+      if (value.startsWith("R$")) return value;
+
+      // Tenta converter string para número
+      const parsed = parseFloat(value.replace(",", "."));
+      if (isNaN(parsed)) return "R$ 0,00";
+
+      return parsed.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+    }
+
+    if (typeof value === "number") {
+      return value.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+    }
+
+    return "R$ 0,00"; // valor padrão em caso de erro
+  };
 
   const renderRow = ({ item }) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{item.nome}</Text>
-      <Text style={styles.cell}>{item.vencimento}</Text>
+      <Text style={styles.cell}>{formatDate(item.data)}</Text>
       <Text style={styles.cell}>{item.tipo}</Text>
-      <Text style={styles.cell}>{item.valor}</Text>
+      <Text style={styles.cell}>{formatCurrency(item.valor)}</Text>
     </View>
   );
+
+  const formatCurrencyBRL = (value) => {
+    const number = typeof value === "string" ? parseFloat(value) : value;
+    return number.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -187,13 +379,14 @@ const PlanilhaPreviewScreen = () => {
             <Text style={styles.titlePlan}>Tipo</Text>
             <Text style={styles.titlePlan}>Valor</Text>
           </View>
-
-          <FlatList
-            data={data}
-            renderItem={renderRow}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false} // Mantém a rolagem do ScrollView externa
-          />
+          {planilha && planilha.linhas.length > 0 && (
+            <FlatList
+              data={planilha.linhas}
+              renderItem={renderRow}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+          )}
         </View>
       </ScrollView>
 
@@ -223,7 +416,7 @@ const PlanilhaPreviewScreen = () => {
         isLoadingModal={isLoadingModalAdd}
         onPress={handleModalAdd}
         visible={modalVisibleAdd}
-        textButton={"FECHAR"}
+        textButton={"ADICIONAR"}
         handleSalvar={handleSalvarConta}
         name={name}
         nameFail={nameFail}
@@ -250,9 +443,9 @@ const PlanilhaPreviewScreen = () => {
         isLoadingModal={isLoadingModal}
         onPress={handleModal}
         visible={modalVisible}
-        saldo={"2000,00"}
-        renda={"2000,00"}
-        total={"2000,00"}
+        saldo={formatCurrencyBRL(saldo)}
+        renda={formatCurrencyBRL(renda)}
+        total={formatCurrencyBRL(valorTotal)}
         textButton={"FECHAR"}
       />
     </View>
@@ -287,9 +480,11 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "center",
   },
   titlePlan: {
+    textAlign: "center",
+    width: "25%",
     fontSize: 16,
     fontFamily: "Roboto-Bold",
     color: Colors.white,

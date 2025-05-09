@@ -121,7 +121,6 @@ const RecoveryPassScreen = ({ route }) => {
       setVisible(true);
     } else {
       api.changePassword(id, senha).then((res) => {
-        console.log(res.status, res.data);
         if (res.status === 200) {
           setIsLoading(false);
           setModalSuccess(true);

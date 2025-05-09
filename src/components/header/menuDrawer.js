@@ -52,7 +52,6 @@ const MenuDrawer = () => {
 
         // logout do backend
         const response = await api.logout(userId, token);
-        console.log("Logout no servidor:", response);
 
         if (response.status === 200) {
           setIsLoading(false);

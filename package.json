@@ -13,12 +13,14 @@
     "@expo-google-fonts/roboto": "^0.2.3",
     "@expo/metro-config": "^0.20.13",
     "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/bottom-tabs": "^7.2.1",
     "@react-navigation/drawer": "^7.1.2",
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/stack": "^7.1.2",
     "axios": "^1.8.4",
     "expo": "^53.0.7",
+    "expo-dev-client": "~5.1.8",
     "expo-device": "~7.1.4",
     "expo-font": "~13.3.1",
     "expo-notifications": "^0.31.1",
@@ -36,8 +38,7 @@
     "react-native-screens": "~4.10.0",
     "react-native-svg": "^15.8.0",
     "react-native-svg-transformer": "^1.5.0",
-    "react-native-web": "^0.20.0",
-    "expo-dev-client": "~5.1.8"
+    "react-native-web": "^0.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0"

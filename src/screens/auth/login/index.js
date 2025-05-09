@@ -70,7 +70,6 @@ const LoginScreen = () => {
 
     try {
       const response = await api.loginUser(email, senha);
-      console.log(response, response.data);
 
       if (response.status === 200) {
         await AsyncStorage.setItem("token", response.data.token);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import MainCard from "../../components/cards/mainCard";
@@ -8,9 +8,12 @@ import IconPlus from "../../../assets/icon/plusBlackIcon.svg";
 import IconGraph from "../../../assets/icon/graphBlackIcon.svg";
 import IconPerfil from "../../../assets/icon/perfilBlackIcon.svg";
 import IconNotification from "../../../assets/icon/notification.svg";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import api from "../../../service/api/planilha/index";
 
 const HomeScreen = () => {
+  const [planilha, setPlanilha] = useState(null);
+
   const navigation = useNavigation();
 
   const handleNotificacoes = () => {
@@ -27,8 +30,8 @@ const HomeScreen = () => {
     navigation.navigate("Profile");
   };
 
-  const handlePlanilhaPreview = () => {
-    navigation.navigate("PlanilhaPreview");
+  const handlePlanilhaPreview = (id) => {
+    navigation.navigate("PlanilhaPreview", { id: id });
   };
   const options = [
     {
@@ -47,17 +50,40 @@ const HomeScreen = () => {
     <ButtonCard Icon={item.icon} name={item.name} onPress={item.onPress} />
   );
 
+  const handleGetPlanilha = () => {
+    api.getPlanilhas().then((res) => {
+      if (res.status === 200) {
+        const todasPlanilhas = res.data;
+
+        const planilhaMaisAtual = todasPlanilhas.reduce((maisAtual, atual) => {
+          return new Date(atual.updatedAt) > new Date(maisAtual.updatedAt)
+            ? atual
+            : maisAtual;
+        });
+
+        setPlanilha(planilhaMaisAtual);
+      }
+    });
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      handleGetPlanilha();
+    }, [])
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.boxRecent}>
-        <Text style={styles.titleRecent}>Visualizado Recentemente</Text>
-
-        <MainCard
-          name={"Nome da planilha"}
-          date={"20/01/2001"}
-          onPress={handlePlanilhaPreview}
-        />
-      </View>
+      {planilha && (
+        <View style={styles.boxRecent}>
+          <Text style={styles.titleRecent}>Visualizado Recentemente</Text>
+          <MainCard
+            name={planilha.nome}
+            date={planilha.createdAt}
+            onPress={() => handlePlanilhaPreview(planilha.id)}
+          />
+        </View>
+      )}
 
       <FlatList
         data={options}
@@ -79,6 +105,7 @@ const styles = StyleSheet.create({
   },
   boxRecent: {
     paddingHorizontal: 26,
+    marginBottom: 40,
   },
   titleRecent: {
     fontSize: 18,
@@ -87,7 +114,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   boxOptions: {
-    marginTop: 40,
+    marginTop: 0,
     marginLeft: 35,
     flexDirection: "row",
     gap: 12,

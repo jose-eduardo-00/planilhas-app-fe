@@ -54,7 +54,6 @@ const AddPlanilhaScreen = () => {
       setModalAlertVisible(true);
     } else {
       api.createPlanilha(user.id, name).then((res) => {
-        console.log(res.status, res.data);
         if (res.status === 201) {
           setIsLoading(false);
           setModalAlertSuccess(true);

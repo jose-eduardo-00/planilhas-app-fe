@@ -28,7 +28,6 @@ const SendEmailScreen = () => {
     setIsLoading(true);
 
     api.sendEmailResetPass(email).then((res) => {
-      console.log(res.status, res.data);
       if (res.status === 200) {
         setIsLoading(false);
         navigation.navigate("VerifyCode", {

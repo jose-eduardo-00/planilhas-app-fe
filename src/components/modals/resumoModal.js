@@ -26,11 +26,20 @@ const ResumoModal = ({
           backgroundColor={"rgba(0, 0, 0, 0.5)"}
         />
         <View style={styles.modalContainer}>
-          <Text style={styles.message}>RENDA: R$ {renda}</Text>
-          <Text style={styles.message}>
-            TOTAL DAS CONTAS {"\n"} R$ {total}
-          </Text>
-          <Text style={styles.message}>SALDO: R$ {saldo}</Text>
+          <View style={styles.boxMessage}>
+            <Text style={styles.message}>RENDA:</Text>
+            <Text style={styles.messageValue}>{renda}</Text>
+          </View>
+
+          <View style={styles.boxMessage1}>
+            <Text style={styles.message}>TOTAL DAS CONTAS:</Text>
+            <Text style={styles.messageValue}>{total}</Text>
+          </View>
+
+          <View style={styles.boxMessage1}>
+            <Text style={styles.message}>SALDO:</Text>
+            <Text style={styles.messageValue}>{saldo}</Text>
+          </View>
 
           <View style={styles.boxButton}>
             <MainButton
@@ -66,12 +75,26 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 20,
   },
+  boxMessage: {
+    flexDirection: "column",
+    marginTop: 20,
+    marginBottom: 15,
+  },
+  boxMessage1: {
+    flexDirection: "column",
+    marginBottom: 15,
+  },
   message: {
     fontSize: 15,
     color: Colors.black,
     fontFamily: "Roboto-Black",
     textAlign: "center",
-    marginBottom: 30,
+  },
+  messageValue: {
+    fontSize: 15,
+    color: Colors.black,
+    fontFamily: "Roboto-Bold",
+    textAlign: "center",
   },
   button: {
     backgroundColor: Colors.thirdBlack,
@@ -85,7 +108,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   boxButton: {
-    marginTop: 10,
+    marginTop: 30,
     alignItems: "center",
     width: "100%",
     height: 52,

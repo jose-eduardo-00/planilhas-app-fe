@@ -107,7 +107,6 @@ const BaseDataScreen = () => {
           setIsLoading(false);
 
           await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
-          console.log(res.data);
           setModalMessage("Dados salvos com sucesso!");
           setModalSuccess(true);
           setVisible(true);

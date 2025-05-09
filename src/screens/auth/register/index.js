@@ -160,7 +160,6 @@ const RegisterScreen = () => {
       setVisible(true);
     } else {
       api.createUser(name, email, senha, expoPushToken).then((res) => {
-        console.log(res.status, res.data);
         if (res.status === 201) {
           setUserId(res.data.user.id);
           setEmailFail(false);

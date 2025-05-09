@@ -49,7 +49,6 @@ const PlanilhasScreen = () => {
   }, []);
 
   const handleChangeTextName = (t) => {
-    console.log(visibleCountTemp);
     if (t != "") {
       setVisibleCountTemp(visibleCount);
       setVisibleCount(planilhas.length);
@@ -91,8 +90,13 @@ const PlanilhasScreen = () => {
       >
         {planilhas &&
           planilhas
-            .filter((item) =>
-              item.nome.toLowerCase().includes(textName.toLowerCase())
+            .filter(
+              (item) =>
+                item.nome.toLowerCase().includes(textName.toLowerCase()) &&
+                new Date(item.createdAt)
+                  .getFullYear()
+                  .toString()
+                  .includes(textYear)
             )
             .slice(0, visibleCount)
             .map((item) => (
