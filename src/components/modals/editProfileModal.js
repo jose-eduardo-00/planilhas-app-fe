@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   Keyboard,
   Modal,
   StatusBar,
@@ -11,6 +12,8 @@ import { Colors } from "../../../constants/colors/colors";
 import MainButton from "../buttons/mainButton";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
 import MainInput from "../inputs/mainInput";
+import SecondButton from "../buttons/secondButton";
+import { baseUrl } from "../../../service/config";
 
 const EditProfileModal = ({
   visible,
@@ -18,6 +21,7 @@ const EditProfileModal = ({
   isLoading,
   changeName,
   name,
+  avatar,
   emailRef,
   changeEmail,
   email,
@@ -27,6 +31,7 @@ const EditProfileModal = ({
   incomeVisible,
   handleIncomeChange,
   handleSalvar,
+  handleImg,
 }) => {
   return (
     <Modal
@@ -43,11 +48,15 @@ const EditProfileModal = ({
         />
         <View style={styles.modalContainer}>
           <View style={styles.avatarContainer}>
-            <AvatarICon width={80} height={80} style={styles.avatarIcon} />
+            {avatar ? (
+              <Image source={{ uri: avatar }} style={styles.avatarIcon} />
+            ) : (
+              <AvatarICon width={80} height={80} style={styles.avatarIcon} />
+            )}
             <View style={styles.boxButtonEdit}>
               <MainButton
                 text="EDITAR FOTO"
-                onPress={handleSalvar}
+                onPress={handleImg}
                 isLoading={isLoading}
               />
             </View>
@@ -76,7 +85,7 @@ const EditProfileModal = ({
             />
           </View>
 
-          <View style={styles.boxInput}>
+          {/* <View style={styles.boxInput}>
             <Text style={styles.titleInput}>Renda Mensal</Text>
             <MainInput
               ref={incomeRef}
@@ -89,7 +98,7 @@ const EditProfileModal = ({
               isPasswordChange={handleIncomeChange}
               keyboardType={"number-pad"}
             />
-          </View>
+          </View> */}
 
           <View style={styles.boxButton}>
             <MainButton
@@ -97,6 +106,9 @@ const EditProfileModal = ({
               onPress={handleSalvar}
               isLoading={isLoading}
             />
+          </View>
+          <View style={styles.boxButton1}>
+            <SecondButton text="FECHAR" onPress={onPress} isLoading={false} />
           </View>
         </View>
       </View>
@@ -149,6 +161,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 52,
   },
+  boxButton1: {
+    marginTop: 10,
+    alignItems: "center",
+    width: "100%",
+    height: 52,
+  },
 
   avatarContainer: {
     alignItems: "center",
@@ -173,6 +191,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 140,
     height: 40,
+  },
+
+  avatarIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    resizeMode: "cover",
   },
 });
 

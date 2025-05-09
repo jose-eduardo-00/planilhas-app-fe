@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Image,
   Keyboard,
   ScrollView,
   StatusBar,
@@ -13,10 +14,15 @@ import MainButton from "../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
 import EditProfileModal from "../../components/modals/editProfileModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { baseUrl } from "../../../service/config";
+import * as ImagePicker from "expo-image-picker";
 
 const ProfileScreen = () => {
+  const [user, setUser] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [income, setIncome] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
@@ -31,6 +37,7 @@ const ProfileScreen = () => {
   const [nameEdit, setNameEdit] = useState("");
   const [emailEdit, setEmailEdit] = useState("");
   const [incomeEdit, setIncomeEdit] = useState("");
+  const [avatarEdit, setAvatarEdit] = useState("");
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [isLoadingModalEdit, setIsLoadingModalEdit] = useState(false);
   const [incomeVisibleEdit, setIncomeVisibleEdit] = useState(false);
@@ -39,6 +46,28 @@ const ProfileScreen = () => {
   const incomeEditRef = useRef(null);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const user = await AsyncStorage.getItem("user");
+        if (user) {
+          const parsedUser = JSON.parse(user);
+          setUser(parsedUser);
+          setName(parsedUser.name);
+          setNameEdit(parsedUser.name);
+          setEmail(parsedUser.email);
+          setEmailEdit(parsedUser.email);
+          setAvatar(parsedUser.avatar);
+          setAvatarEdit(parsedUser.avatar);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   const handleEditName = (t) => {
     setNameEdit(t);
@@ -80,6 +109,27 @@ const ProfileScreen = () => {
     setIncomeVisibleEdit(!incomeVisibleEdit);
   };
 
+  const handleImg = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      alert("É necessário permitir o acesso à galeria.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const selectedImageUri = result.assets[0].uri;
+      setAvatarEdit(selectedImageUri);
+    }
+  };
+
   const handleEditSalvar = () => {};
 
   return (
@@ -96,7 +146,16 @@ const ProfileScreen = () => {
         <Text style={styles.title}>Perfil</Text>
 
         <View style={styles.avatarContainer}>
-          <AvatarICon width={80} height={80} style={styles.avatarIcon} />
+          {avatar ? (
+            <Image
+              source={`${baseUrl}${avatar}`}
+              style={styles.avatarIcon}
+              width={80}
+              height={80}
+            />
+          ) : (
+            <AvatarICon width={80} height={80} style={styles.avatarIcon} />
+          )}
         </View>
 
         <View style={styles.boxInput}>
@@ -122,7 +181,7 @@ const ProfileScreen = () => {
           />
         </View>
 
-        <View style={styles.boxInput}>
+        {/* <View style={styles.boxInput}>
           <Text style={styles.titleInput}>Renda Mensal</Text>
           <MainInput
             ref={incomeRef}
@@ -135,7 +194,7 @@ const ProfileScreen = () => {
             isPasswordChange={handlePassChange}
             keyboardType={"number-pad"}
           />
-        </View>
+        </View> */}
 
         <View style={styles.boxButton}>
           <MainButton
@@ -152,6 +211,7 @@ const ProfileScreen = () => {
           changeName={handleEditName}
           name={nameEdit}
           email={emailEdit}
+          avatar={avatarEdit}
           emailRef={emailEditRef}
           changeEmail={handleEditEmail}
           income={incomeEdit}
@@ -160,6 +220,7 @@ const ProfileScreen = () => {
           handleIncomeChange={handleEditIncomeChange}
           incomeVisible={incomeVisibleEdit}
           handleSalvar={handleEditSalvar}
+          handleImg={handleImg}
         />
       </View>
     </ScrollView>
