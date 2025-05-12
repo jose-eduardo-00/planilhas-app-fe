@@ -17,6 +17,8 @@ import EditProfileModal from "../../components/modals/editProfileModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { baseUrl } from "../../../service/config";
 import * as ImagePicker from "expo-image-picker";
+import AlertModal from "../../components/modals/alertModal";
+import api from "../../../service/api/user/index";
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(null);
@@ -38,9 +40,15 @@ const ProfileScreen = () => {
   const [emailEdit, setEmailEdit] = useState("");
   const [incomeEdit, setIncomeEdit] = useState("");
   const [avatarEdit, setAvatarEdit] = useState("");
+  const [avatarEditObj, setAvatarEditObj] = useState("");
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [isLoadingModalEdit, setIsLoadingModalEdit] = useState(false);
   const [incomeVisibleEdit, setIncomeVisibleEdit] = useState(false);
+
+  //alert
+  const [visible, setVisible] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const emailEditRef = useRef(null);
   const incomeEditRef = useRef(null);
@@ -59,7 +67,11 @@ const ProfileScreen = () => {
           setEmail(parsedUser.email);
           setEmailEdit(parsedUser.email);
           setAvatar(parsedUser.avatar);
-          setAvatarEdit(parsedUser.avatar);
+          setAvatarEdit(
+            parsedUser.avatar
+              ? `${baseUrl}/public/${parsedUser.avatar}`
+              : parsedUser.avatar
+          );
         }
       } catch (error) {
         console.error("Erro ao carregar dados do usuário:", error);
@@ -125,12 +137,54 @@ const ProfileScreen = () => {
     });
 
     if (!result.canceled) {
-      const selectedImageUri = result.assets[0].uri;
-      setAvatarEdit(selectedImageUri);
+      const selectedImageUri = result.assets[0];
+
+      setAvatarEditObj(selectedImageUri);
+      setAvatarEdit(selectedImageUri.uri);
     }
   };
 
-  const handleEditSalvar = () => {};
+  const handleAlertModal = () => {
+    if (modalSuccess) {
+      setVisibleModalEdit(false);
+    }
+
+    setVisible(!visible);
+  };
+
+  const handleEditSalvar = () => {
+    if (nameEdit == "") {
+      setModalSuccess(false);
+      setModalMessage("O campo de nome não pode ficar vazio.");
+      setVisible(true);
+    } else if (emailEdit == "") {
+      setModalSuccess(false);
+      setModalMessage("O campo de email não pode ficar vazio.");
+      setVisible(true);
+    } else {
+      api
+        .updateUser(user.id, nameEdit, emailEdit, avatarEditObj)
+        .then(async (res) => {
+          console.log(res.status, res.data);
+          if (res.status === 200) {
+            await AsyncStorage.setItem("token", res.data.token);
+            await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
+
+            setAvatarEditObj("");
+
+            setModalMessage("Perfil atualizado com sucesso.");
+            setModalSuccess(true);
+            setVisible(true);
+          } else {
+            setModalSuccess(false);
+            setModalMessage(
+              "Falha ao tentar editar o perfil, tente novamente mais tarde."
+            );
+            setVisible(true);
+          }
+        });
+    }
+  };
 
   return (
     <ScrollView
@@ -148,13 +202,11 @@ const ProfileScreen = () => {
         <View style={styles.avatarContainer}>
           {avatar ? (
             <Image
-              source={`${baseUrl}${avatar}`}
+              source={{ uri: `${baseUrl}/public/${avatar}` }}
               style={styles.avatarIcon}
-              width={80}
-              height={80}
             />
           ) : (
-            <AvatarICon width={80} height={80} style={styles.avatarIcon} />
+            <AvatarICon style={styles.avatarIcon} />
           )}
         </View>
 
@@ -214,13 +266,17 @@ const ProfileScreen = () => {
           avatar={avatarEdit}
           emailRef={emailEditRef}
           changeEmail={handleEditEmail}
-          income={incomeEdit}
-          incomeRef={incomeEditRef}
-          changeIncome={handleEditIncome}
-          handleIncomeChange={handleEditIncomeChange}
-          incomeVisible={incomeVisibleEdit}
           handleSalvar={handleEditSalvar}
           handleImg={handleImg}
+        />
+
+        <AlertModal
+          visible={visible}
+          message={modalMessage}
+          success={modalSuccess}
+          onPress={handleAlertModal}
+          isLoadingModal={false}
+          textButton={"CONTINUAR"}
         />
       </View>
     </ScrollView>
@@ -263,6 +319,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 52,
+  },
+  avatarIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
 });
 

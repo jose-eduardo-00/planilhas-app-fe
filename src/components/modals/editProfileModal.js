@@ -25,11 +25,6 @@ const EditProfileModal = ({
   emailRef,
   changeEmail,
   email,
-  incomeRef,
-  changeIncome,
-  income,
-  incomeVisible,
-  handleIncomeChange,
   handleSalvar,
   handleImg,
 }) => {
@@ -80,8 +75,8 @@ const EditProfileModal = ({
               onChange={(t) => changeEmail(t)}
               placeholder="email@example.com"
               text={email}
-              returnKeyType="next"
-              onSubmitEditing={() => incomeRef.current?.focus()}
+              returnKeyType="done"
+              onSubmitEditing={Keyboard.dismiss}
             />
           </View>
 

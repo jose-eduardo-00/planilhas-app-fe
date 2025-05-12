@@ -94,4 +94,33 @@ export default {
       return error.response || error.message || error;
     }
   },
+  updateUser: async (id, name, email, avatar) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("name", name);
+      formData.append("email", email);
+
+      if (avatar) {
+        formData.append("avatar", {
+          uri: avatar.uri,
+          name: avatar.fileName,
+          type: avatar.mimeType,
+        });
+      }
+
+      const response = await http.put(`/users/edit/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "OPTIONS,PUT",
+        },
+      });
+
+      return response;
+    } catch (error) {
+      return error.response || error.message || error;
+    }
+  },
 };
