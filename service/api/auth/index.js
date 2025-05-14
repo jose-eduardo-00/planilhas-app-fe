@@ -27,9 +27,9 @@ export default {
     try {
       const response = await http.post(
         "/auth/login",
-        { 
-          email, 
-          senha 
+        {
+          email,
+          senha,
         },
         {
           headers: {
@@ -49,17 +49,17 @@ export default {
   logout: async (userId, token) => {
     try {
       const response = await http.post(
-        "/auth/logout", 
+        "/auth/logout",
         {
-          userId: userId, 
-          token: token, 
+          userId: userId,
+          token: token,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
             "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+            "Access-Control-Allow-Methods": "OPTIONS,POST",
           },
         }
       );
@@ -67,5 +67,26 @@ export default {
     } catch (error) {
       return error.response || error.message || error;
     }
-  }
+  },
+  checkToken: async (token) => {
+    try {
+      const response = await http.post(
+        "/auth/check-token",
+        {
+          token: token,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST",
+          },
+        }
+      );
+      return response;
+    } catch (error) {
+      return error.response || error.message || error;
+    }
+  },
 };

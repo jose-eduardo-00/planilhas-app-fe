@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { loadFonts } from "../../../constants/fonts/fonts";
 import { Colors } from "../../../constants/colors/colors";
 import { useGlobalContext } from "../../context/context";
+import api from "../../../service/api/auth/index";
 
 const SplashScreen = () => {
   const navigation = useNavigation();
@@ -22,7 +23,15 @@ const SplashScreen = () => {
     if (!token) {
       navigation.navigate("Login");
     } else {
-      navigation.navigate("Drawer");
+      api.checkToken(token).then((res) => {
+        if (res.status === 200) {
+          navigation.navigate("Drawer");
+        } else if (404) {
+          navigation.navigate("Login");
+        } else {
+          navigation.navigate("Login");
+        }
+      });
     }
   };
 
