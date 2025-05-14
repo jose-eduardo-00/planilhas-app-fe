@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
 import IconPlanilha from "../../../assets/icon/planilhaIcon.svg";
@@ -10,10 +10,15 @@ import MainButton from "../buttons/mainButton";
 import api from "../../../service/api/auth/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlertModal from "../modals/alertModal";
+import { useGlobalContext } from "../../context/context";
+import { jwtDecode } from "jwt-decode";
+import { baseUrl } from "../../../service/config";
 
 const MenuDrawer = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState(null);
   const [userName, setUserName] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
 
@@ -21,50 +26,51 @@ const MenuDrawer = () => {
   const [modalSuccess, setModalSuccess] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  // carrega os dados do usuário
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const user = await AsyncStorage.getItem("user");
-        if (user) {
-          const parsedUser = JSON.parse(user);
-          setUserName(parsedUser.name);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-      }
-    };
+  const { token, updateToken } = useGlobalContext();
 
-    loadUserData();
-  }, []);
+  const handleCheckToken = () => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserName(decoded.user.name);
+      setUser(decoded.user);
+      setAvatar(decoded.user.avatar);
+    } else {
+      navigation.navigate("Login");
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      handleCheckToken();
+    }
+  }, [token]);
 
   //remove o token e faz o logout
   const handleLogout = async () => {
     setIsLoading(true);
-
     try {
-      const token = await AsyncStorage.getItem("token");
-      const user = await AsyncStorage.getItem("user");
-
-      if (token && user) {
-        const parsedUser = JSON.parse(user);
-        const userId = parsedUser.id;
-
+      if (!!token && !!user) {
+        const userId = user.id;
         // logout do backend
+        console.log(user);
         const response = await api.logout(userId, token);
+        console.log(response.status, response.data);
 
         if (response.status === 200) {
           setIsLoading(false);
 
-          await AsyncStorage.removeItem("token");
-          await AsyncStorage.removeItem("user");
+          updateToken(null);
+          // await AsyncStorage.removeItem("token");
+          // await AsyncStorage.removeItem("user");
 
           navigation.reset({
             routes: [{ name: "Login" }],
           });
         } else {
           setIsLoading(false);
-          setModalMessage("Preencha todos os campos!");
+          setModalMessage(
+            "Falha ao tentar realizar o logout, tente novamente mais tarde!"
+          );
           setModalSuccess(false);
           setVisible(true);
         }
@@ -88,7 +94,15 @@ const MenuDrawer = () => {
             <Text style={styles.textPerfil}>Ver perfil</Text>
           </TouchableOpacity>
         </View>
-        <AvatarICon />
+
+        {avatar ? (
+          <Image
+            source={{ uri: `${baseUrl}/public/${avatar}` }}
+            style={styles.avatarIcon}
+          />
+        ) : (
+          <AvatarICon />
+        )}
       </View>
       <View style={styles.div}></View>
 
@@ -137,7 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
   },
   boxPerfil: {
-    paddingHorizontal: 5,
+    // paddingHorizontal: 5,
     marginTop: 90,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -186,6 +200,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 52,
+  },
+  avatarIcon: {
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    marginLeft: 5,
   },
 });
 

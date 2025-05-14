@@ -4,10 +4,13 @@ import React, { useEffect } from "react";
 import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { loadFonts } from "../../../constants/fonts/fonts";
 import { Colors } from "../../../constants/colors/colors";
+import { useGlobalContext } from "../../context/context";
 
 const SplashScreen = () => {
   const navigation = useNavigation();
   const fontsLoaded = loadFonts(); // Carregar as fontes
+
+  const { token } = useGlobalContext();
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -16,8 +19,6 @@ const SplashScreen = () => {
   }, [fontsLoaded]);
 
   const handleGetToken = async () => {
-    const token = await AsyncStorage.getItem("token");
-
     if (!token) {
       navigation.navigate("Login");
     } else {

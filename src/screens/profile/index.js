@@ -19,6 +19,8 @@ import { baseUrl } from "../../../service/config";
 import * as ImagePicker from "expo-image-picker";
 import AlertModal from "../../components/modals/alertModal";
 import api from "../../../service/api/user/index";
+import { useGlobalContext } from "../../context/context";
+import { jwtDecode } from "jwt-decode";
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(null);
@@ -55,31 +57,66 @@ const ProfileScreen = () => {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const user = await AsyncStorage.getItem("user");
-        if (user) {
-          const parsedUser = JSON.parse(user);
-          setUser(parsedUser);
-          setName(parsedUser.name);
-          setNameEdit(parsedUser.name);
-          setEmail(parsedUser.email);
-          setEmailEdit(parsedUser.email);
-          setAvatar(parsedUser.avatar);
-          setAvatarEdit(
-            parsedUser.avatar
-              ? `${baseUrl}/public/${parsedUser.avatar}`
-              : parsedUser.avatar
-          );
-        }
-      } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-      }
-    };
+  const { updateToken } = useGlobalContext();
 
-    loadUserData();
-  }, []);
+  const { token } = useGlobalContext();
+
+  const handleCheckToken = () => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUser(decoded);
+
+      setUser(decoded.user);
+      setName(decoded.user.name);
+      setNameEdit(decoded.user.name);
+      setEmail(decoded.user.email);
+      setEmailEdit(decoded.user.email);
+      setAvatar(decoded.user.avatar);
+      setAvatarEdit(
+        decoded.user.avatar
+          ? `${baseUrl}/public/${decoded.user.avatar}`
+          : decoded.user.avatar
+      );
+    } else {
+      handleLogin();
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      handleCheckToken();
+    }
+  }, [token]);
+
+  const handleLogin = () => {
+    navigation.navigate("Login");
+  };
+
+  // useEffect(() => {
+  //   const loadUserData = async () => {
+  //     try {
+  //       const user = await AsyncStorage.getItem("user");
+  //       if (user) {
+  //         const parsedUser = JSON.parse(user);
+  //         setUser(parsedUser);
+  //         setName(parsedUser.name);
+  //         setNameEdit(parsedUser.name);
+  //         setEmail(parsedUser.email);
+  //         setEmailEdit(parsedUser.email);
+  //         setAvatar(parsedUser.avatar);
+  //         setAvatarEdit(
+  //           parsedUser.avatar
+  //             ? `${baseUrl}/public/${parsedUser.avatar}`
+  //             : parsedUser.avatar
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao carregar dados do usuário:", error);
+  //     }
+  //   };
+
+  //   loadUserData();
+  // }, []);
 
   const handleEditName = (t) => {
     setNameEdit(t);
@@ -167,14 +204,14 @@ const ProfileScreen = () => {
         .then(async (res) => {
           console.log(res.status, res.data);
           if (res.status === 200) {
-            await AsyncStorage.setItem("token", res.data.token);
-            await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
+            updateToken(res.data.token);
 
             setAvatarEditObj("");
 
             setModalMessage("Perfil atualizado com sucesso.");
             setModalSuccess(true);
             setVisible(true);
+            handleCheckToken();
           } else {
             setModalSuccess(false);
             setModalMessage(

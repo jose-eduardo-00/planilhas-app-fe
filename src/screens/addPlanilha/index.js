@@ -7,6 +7,8 @@ import AlertModal from "../../components/modals/alertModal";
 import api from "../../../service/api/planilha/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useGlobalContext } from "../../context/context";
+import { jwtDecode } from "jwt-decode";
 
 const AddPlanilhaScreen = () => {
   const [name, setName] = useState("");
@@ -23,21 +25,22 @@ const AddPlanilhaScreen = () => {
   const [modalAlertSuccess, setModalAlertSuccess] = useState(false);
   const [modalAlertMessage, setModalAlertMessage] = useState("");
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const user = await AsyncStorage.getItem("user");
-        if (user) {
-          const parsedUser = JSON.parse(user);
-          setUser(parsedUser);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-      }
-    };
+  const { token } = useGlobalContext();
 
-    loadUserData();
-  }, []);
+  const handleCheckToken = () => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUser(decoded.user);
+    } else {
+      navigation.navigate("Login");
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      handleCheckToken();
+    }
+  }, [token]);
 
   const navigation = useNavigation();
 

@@ -21,6 +21,8 @@ import {
 } from "@react-navigation/native";
 import api from "../../../service/api/planilha/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGlobalContext } from "../../context/context";
+import { jwtDecode } from "jwt-decode";
 
 const PlanilhaPreviewScreen = () => {
   const [user, setUser] = useState(null);
@@ -64,6 +66,8 @@ const PlanilhaPreviewScreen = () => {
 
   const { id } = route.params;
 
+  const { token } = useGlobalContext();
+
   // useFocusEffect(
   //   React.useCallback(() => {
   //     const onBackPress = () => {
@@ -91,14 +95,12 @@ const PlanilhaPreviewScreen = () => {
   };
 
   const handleToken = async () => {
-    const user = await AsyncStorage.getItem("user");
-
-    if (user) {
-      const parsedUser = JSON.parse(user);
-      setUser(parsedUser);
-      setRenda(parsedUser.renda_mensal);
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUser(decoded.user);
+      setRenda(decoded.user.renda_mensal);
     } else {
-      return;
+      navigation.navigate("Login");
     }
   };
 

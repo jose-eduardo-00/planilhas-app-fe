@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import AlertModal from "../../../components/modals/alertModal";
 import api from "../../../../service/api/auth/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGlobalContext } from "../../../context/context";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -32,6 +33,8 @@ const LoginScreen = () => {
 
   const navigation = useNavigation();
   const senhaRef = useRef(null);
+
+  const { updateToken } = useGlobalContext();
 
   const handleEmail = (t) => {
     setEmailFail(false);
@@ -72,8 +75,7 @@ const LoginScreen = () => {
       const response = await api.loginUser(email, senha);
 
       if (response.status === 200) {
-        await AsyncStorage.setItem("token", response.data.token);
-        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+        updateToken(response.data.token);
 
         setModalMessage("Login realizado com sucesso!");
         setModalSuccess(true);

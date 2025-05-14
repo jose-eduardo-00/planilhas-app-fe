@@ -7,6 +7,7 @@ import api from "../../../service/api/user/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlertModal from "../../components/modals/alertModal";
 import { useFocusEffect } from "@react-navigation/native";
+import { useGlobalContext } from "../../context/context";
 
 const BaseDataScreen = () => {
   const [user, setUser] = useState(null);
@@ -30,6 +31,8 @@ const BaseDataScreen = () => {
   const salarioRef = useRef(null);
   const outrosRef = useRef(null);
 
+  const { token, updateToken } = useGlobalContext();
+
   const formatCurrency = (value) => {
     let num = value.replace(/\D/g, ""); // Remove tudo que não for número
     num = (Number(num) / 100).toLocaleString("pt-BR", {
@@ -49,10 +52,8 @@ const BaseDataScreen = () => {
   };
 
   const handleToken = async () => {
-    const user = await AsyncStorage.getItem("user");
-
-    if (user) {
-      const parsedUser = JSON.parse(user);
+    if (token) {
+      const parsedUser = jwtDecode(token);
 
       setUser(parsedUser);
       handleSalario(formatCurrencyValue(parsedUser.salario));
@@ -105,8 +106,7 @@ const BaseDataScreen = () => {
       .then(async (res) => {
         if (res.status === 200) {
           setIsLoading(false);
-
-          await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
+          updateToken(res.data.token);
           setModalMessage("Dados salvos com sucesso!");
           setModalSuccess(true);
           setVisible(true);
