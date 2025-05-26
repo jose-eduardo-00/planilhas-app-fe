@@ -81,4 +81,64 @@ export default {
       return error.response || error.message || error;
     }
   },
+  updateLinha: async (planilhaId, nome, tipo, data, valor) => {
+    try {
+      const response = await http.put(
+        `/planilha/edit-linha/${planilhaId}`,
+        {
+          nome: nome,
+          tipo: tipo,
+          data: data,
+          valor: valor,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,PUT",
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      return error.response || error.message || error;
+    }
+  },
+  deleteLinha: async (planilhaId) => {
+    try {
+      const response = await http.delete(
+        `/planilha/delete-linha/${planilhaId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,DELETE",
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      return error.response || error.message || error;
+    }
+  },
+  deletePlanilha: async (planilhaId) => {
+    try {
+      const response = await http.delete(`/planilha/delete/${planilhaId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "OPTIONS,DELETE",
+        },
+      });
+
+      return response;
+    } catch (error) {
+      return error.response || error.message || error;
+    }
+  },
 };

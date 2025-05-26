@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   BackHandler,
   FlatList,
@@ -113,11 +113,12 @@ const PlanilhaPreviewScreen = () => {
     });
   };
 
-  useEffect(() => {
-    handleGetPlanilha();
-
-    handleToken();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      handleGetPlanilha();
+      handleToken();
+    }, [])
+  );
 
   useEffect(() => {
     if (renda && valorTotal !== 0) {
@@ -128,7 +129,7 @@ const PlanilhaPreviewScreen = () => {
   }, [renda, valorTotal]);
 
   const handleEdit = () => {
-    navigation.navigate("PlanilhaEdit");
+    navigation.navigate("PlanilhaEdit", { id: id });
   };
 
   const handleResumo = () => {
@@ -508,6 +509,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Medium",
   },
   footer: {
+    position: "absolute",
     backgroundColor: Colors.black,
     height: 70,
     width: "100%",
@@ -515,6 +517,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
+    bottom: 0,
   },
   boxButton: {
     height: 35,

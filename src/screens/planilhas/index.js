@@ -84,42 +84,50 @@ const PlanilhasScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {planilhas &&
-          planilhas
-            .filter(
-              (item) =>
-                item.nome.toLowerCase().includes(textName.toLowerCase()) &&
-                new Date(item.createdAt)
-                  .getFullYear()
-                  .toString()
-                  .includes(textYear)
-            )
-            .slice(0, visibleCount)
-            .map((item) => (
-              <MainCard
-                key={item.id}
-                name={item.nome}
-                date={item.createdAt}
-                onPress={() => handlePlanilha(item)}
-              />
-            ))}
+      {planilhas && planilhas.length > 0 ? (
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {planilhas &&
+            planilhas
+              .filter(
+                (item) =>
+                  item.nome.toLowerCase().includes(textName.toLowerCase()) &&
+                  new Date(item.createdAt)
+                    .getFullYear()
+                    .toString()
+                    .includes(textYear)
+              )
+              .slice(0, visibleCount)
+              .map((item) => (
+                <MainCard
+                  key={item.id}
+                  name={item.nome}
+                  date={item.createdAt}
+                  onPress={() => handlePlanilha(item)}
+                />
+              ))}
 
-        {planilhas &&
-          planilhas.filter((item) =>
-            item.nome.toLowerCase().includes(textName.toLowerCase())
-          ).length > visibleCount && (
-            <TouchableOpacity
-              style={styles.buttonMore}
-              onPress={() => setVisibleCount((prev) => prev + 1)}
-            >
-              <Text style={styles.textMore}>Ver mais</Text>
-            </TouchableOpacity>
-          )}
-      </ScrollView>
+          {planilhas &&
+            planilhas.filter((item) =>
+              item.nome.toLowerCase().includes(textName.toLowerCase())
+            ).length > visibleCount && (
+              <TouchableOpacity
+                style={styles.buttonMore}
+                onPress={() => setVisibleCount((prev) => prev + 1)}
+              >
+                <Text style={styles.textMore}>Ver mais</Text>
+              </TouchableOpacity>
+            )}
+        </ScrollView>
+      ) : (
+        <View style={styles.boxTextOffPlan}>
+          <Text style={styles.textOffPlan}>
+            Você ainda não tem planilhas criadas!
+          </Text>
+        </View>
+      )}
 
       <MenuBottomModal
         onPress={handleVisibleModal}
@@ -168,6 +176,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Roboto-Regular",
     color: Colors.black,
+  },
+  boxTextOffPlan: {
+    marginTop: 40,
+    alignItems: "center",
+  },
+  textOffPlan: {
+    fontSize: 18,
+    textAlign: "center",
+    fontFamily: "Roboto-Regular",
   },
 });
 
