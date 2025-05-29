@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,18 +11,54 @@ import { Colors } from "../../../constants/colors/colors";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../../../assets/icon/arrowRight.svg";
 import { useGlobalContext } from "../../context/context";
+import api from "../../../service/api/notification/index";
+import { jwtDecode } from "jwt-decode";
 
 const NotificationScreen = () => {
-  const { theme } = useGlobalContext();
+  const [notifications, setNotifications] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const { theme, token } = useGlobalContext();
 
   const navigation = useNavigation();
 
-  const notifications = [
-    "Backup concluído! Seus dados estão seguros",
-    "Você recebeu acesso a uma nova planilha!",
-    "Alguém editou sua planilha: clique para ver as alterações.",
-    "Sua planilha foi salva com sucesso!",
-  ];
+  // const notifications = [
+  //   "Backup concluído! Seus dados estão seguros",
+  //   "Você recebeu acesso a uma nova planilha!",
+  //   "Alguém editou sua planilha: clique para ver as alterações.",
+  //   "Sua planilha foi salva com sucesso!",
+  // ];
+
+  const handleToken = async () => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUser(decoded.user);
+    } else {
+      navigation.navigate("Login");
+    }
+  };
+
+  const getAllNotification = () => {
+    api.getAllNotifications().then((res) => {
+      if (res.status === 200) {
+        console.log(res.data);
+        setNotifications(res.data);
+      }
+    });
+  };
+
+  useEffect(() => {
+    handleToken();
+    getAllNotification();
+  }, []);
+
+  const handleViewNotification = (item) => {
+    api.viewNotification(user.id, item.id).then((res) => {
+      console.log(res.status, res.data);
+      // if (res.status === 201) {
+      // }
+    });
+  };
 
   const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
   const backgroundColorOption =
@@ -43,21 +79,23 @@ const NotificationScreen = () => {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        {notifications.map((notification, index) => (
-          <View key={index} style={styles.settingsList}>
-            <TouchableOpacity
-              style={[
-                styles.option,
-                { backgroundColor: backgroundColorOption },
-              ]}
-            >
-              <Text style={[styles.optionText, { color: textColor }]}>
-                {notification}
-              </Text>
-              <ArrowIcon style={[styles.arrow, { color: iconColor }]} />
-            </TouchableOpacity>
-          </View>
-        ))}
+        {notifications &&
+          notifications.map((notification, index) => (
+            <View key={index} style={styles.settingsList}>
+              <TouchableOpacity
+                style={[
+                  styles.option,
+                  { backgroundColor: backgroundColorOption },
+                ]}
+                onPress={() => handleViewNotification(notification)}
+              >
+                <Text style={[styles.optionText, { color: textColor }]}>
+                  {notification.nome}
+                </Text>
+                <ArrowIcon style={[styles.arrow, { color: iconColor }]} />
+              </TouchableOpacity>
+            </View>
+          ))}
       </ScrollView>
     </View>
   );

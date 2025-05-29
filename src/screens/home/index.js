@@ -11,13 +11,37 @@ import IconNotification from "../../../assets/icon/notification.svg";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import api from "../../../service/api/planilha/index";
 import { useGlobalContext } from "../../context/context";
+import apiNotification from "../../../service/api/notification/index";
+import { jwtDecode } from "jwt-decode";
 
 const HomeScreen = () => {
   const [planilha, setPlanilha] = useState(null);
+  const [user, setUser] = useState(null);
+  const [qtdNotification, setQtdNotification] = useState(0);
 
-  const { theme } = useGlobalContext();
+  const { theme, token } = useGlobalContext();
 
   const navigation = useNavigation();
+
+  const handleToken = async () => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUser(decoded.user);
+      getNumberNotifications(decoded.user.id);
+    } else {
+      navigation.navigate("Login");
+    }
+  };
+
+  const getNumberNotifications = (id) => {
+    apiNotification.getNumberMyNotifications(id).then((res) => {
+      if (res.status === 200) {
+        setQtdNotification(res.data.quantidade);
+      } else {
+        setQtdNotification(0);
+      }
+    });
+  };
 
   const handleNotificacoes = () => {
     navigation.navigate("Notification");
@@ -44,6 +68,7 @@ const HomeScreen = () => {
       onPress: handleNotificacoes,
       height: 35,
       width: 35,
+      qtd: qtdNotification,
     },
     {
       id: "2",
@@ -90,6 +115,7 @@ const HomeScreen = () => {
       onPress={item.onPress}
       iconHeight={item.height}
       iconWidth={item.width}
+      qtd={item.qtd}
     />
   );
 
@@ -111,6 +137,7 @@ const HomeScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      handleToken();
       handleGetPlanilha();
     }, [])
   );
