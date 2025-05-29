@@ -7,6 +7,7 @@ import RedEye from "../../../assets/icon/eyeRed.svg";
 import ClosedRedEye from "../../../assets/icon/closedEyeRed.svg";
 import GreenEye from "../../../assets/icon/eyeGreen.svg";
 import ClosedGreenEye from "../../../assets/icon/closedEyeGreen.svg";
+import { useGlobalContext } from "../../context/context";
 
 const InputCode = forwardRef(
   (
@@ -22,16 +23,15 @@ const InputCode = forwardRef(
     },
     ref
   ) => {
+    const { theme } = useGlobalContext();
+    const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+    const textColor = theme === "light" ? "#212121" : "#FFF";
     return (
       <View
         style={[
           styles.inputArea,
           {
-            borderColor: fail
-              ? Colors.red
-              : success
-              ? Colors.green
-              : Colors.black,
+            borderColor: fail ? Colors.red : success ? Colors.green : textColor,
           },
         ]}
       >
@@ -40,7 +40,8 @@ const InputCode = forwardRef(
           onChangeText={onChange}
           placeholder={placeholder}
           value={text}
-          style={styles.input}
+          style={[styles.input, { color: textColor }]}
+          placeholderTextColor={textColor}
           returnKeyType={returnKeyType}
           onSubmitEditing={onSubmitEditing} // Muda para o próximo input
           blurOnSubmit={false}

@@ -15,6 +15,7 @@ import api from "../../../service/api/planilha/index";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import EditRowPlanilhaModal from "../../components/modals/editRowPlanilhaModal";
 import DeleteModal from "../../components/modals/deleteModal";
+import { useGlobalContext } from "../../context/context";
 
 const PlanilhaEditScreen = () => {
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
@@ -67,6 +68,8 @@ const PlanilhaEditScreen = () => {
   const route = useRoute();
 
   const { id } = route.params;
+
+  const { theme } = useGlobalContext();
 
   const navigation = useNavigation();
 
@@ -351,8 +354,16 @@ const PlanilhaEditScreen = () => {
     }
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const invertBackGround = theme === "light" ? "#FFF" : "#FFF";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+  const iconColor = theme === "light" ? "#212121" : "#FFF";
+
   const renderRow = ({ item }) => (
-    <TouchableOpacity style={styles.row} onPress={() => handleEdit(item)}>
+    <TouchableOpacity
+      style={[styles.row, { backgroundColor: invertBackGround }]}
+      onPress={() => handleEdit(item)}
+    >
       <Text style={styles.cell}>{item.nome}</Text>
       <Text style={styles.cell}>{formatDate(item.data)}</Text>
       <Text style={styles.cell}>{item.tipo}</Text>
@@ -361,16 +372,18 @@ const PlanilhaEditScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
       <View style={styles.boxTitle}>
-        <Text style={styles.title}>{planilha && planilha.nome}</Text>
+        <Text style={[styles.title, { color: textColor }]}>
+          {planilha && planilha.nome}
+        </Text>
         <TouchableOpacity onPress={handleDeleteModal}>
-          <IconFilter style={styles.iconFilter} />
+          <IconFilter style={[styles.iconFilter, { color: iconColor }]} />
         </TouchableOpacity>
       </View>
 
@@ -458,7 +471,6 @@ const PlanilhaEditScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 40,
   },
   boxTitle: {

@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import AvatarICon from "../../../assets/icon/avatarIcon.svg";
 import IconPlanilha from "../../../assets/icon/planilhaIcon.svg";
 import IconDados from "../../../assets/icon/dadosIcon.svg";
-import IconConfig from "../../../assets/icon/configIcon.svg";
+import IconConfig from "../../../assets/icon/config.svg";
 import { Colors } from "../../../constants/colors/colors";
 import MainButton from "../buttons/mainButton";
 import api from "../../../service/api/auth/index";
@@ -26,7 +26,7 @@ const MenuDrawer = () => {
   const [modalSuccess, setModalSuccess] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  const { token, updateToken } = useGlobalContext();
+  const { token, updateToken, theme } = useGlobalContext();
 
   const handleCheckToken = () => {
     if (token) {
@@ -85,13 +85,21 @@ const MenuDrawer = () => {
     setVisible(!visible);
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+  const iconColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <View style={styles.boxPerfil}>
         <View>
-          <Text style={styles.name}>{userName || "Usuário"}</Text>
+          <Text style={[styles.name, { color: textColor }]}>
+            {userName || "Usuário"}
+          </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-            <Text style={styles.textPerfil}>Ver perfil</Text>
+            <Text style={[styles.textPerfil, { color: textColor }]}>
+              Ver perfil
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -110,22 +118,34 @@ const MenuDrawer = () => {
         style={styles.boxOptions}
         onPress={() => navigation.navigate("Planilhas")}
       >
-        <IconPlanilha />
-        <Text style={styles.textOption}>Planilhas</Text>
+        <IconPlanilha width={30} height={30} style={{ color: iconColor }} />
+        <Text style={[styles.textOption, { color: textColor }]}>Planilhas</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.boxOptions1}
         onPress={() => navigation.navigate("BaseData")}
       >
-        <IconDados />
-        <Text style={styles.textOption}>Dados Base</Text>
+        <IconDados
+          width={20}
+          height={20}
+          style={{ color: iconColor, marginLeft: 5, marginRight: 4 }}
+        />
+        <Text style={[styles.textOption, { color: textColor }]}>
+          Dados Base
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.boxOptions1}
         onPress={() => navigation.navigate("Config")}
       >
-        <IconConfig />
-        <Text style={styles.textOption}>Configurações</Text>
+        <IconConfig
+          width={25}
+          height={25}
+          style={{ color: iconColor, marginLeft: 3, marginRight: 1 }}
+        />
+        <Text style={[styles.textOption, { color: textColor }]}>
+          Configurações
+        </Text>
       </TouchableOpacity>
 
       {/* btn logout*/}
@@ -195,7 +215,7 @@ const styles = StyleSheet.create({
   },
   boxButton: {
     position: "absolute",
-    bottom: 20,
+    bottom: 60,
     alignSelf: "center",
     alignItems: "center",
     width: "100%",

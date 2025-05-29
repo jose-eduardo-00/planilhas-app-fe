@@ -14,6 +14,7 @@ import AvatarICon from "../../../assets/icon/avatarIcon.svg";
 import MainInput from "../inputs/mainInput";
 import SecondButton from "../buttons/secondButton";
 import { baseUrl } from "../../../service/config";
+import { useGlobalContext } from "../../context/context";
 
 const EditProfileModal = ({
   visible,
@@ -28,6 +29,11 @@ const EditProfileModal = ({
   handleSalvar,
   handleImg,
 }) => {
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <Modal
       transparent={true}
@@ -37,11 +43,13 @@ const EditProfileModal = ({
     >
       <View style={styles.modalBackground}>
         <StatusBar
-          barStyle={"dark-content"}
+          barStyle={theme === "light" ? "dark-content" : "light-content"}
           translucent={true}
-          backgroundColor={"rgba(0, 0, 0, 0.5)"}
+          backgroundColor={backgroundColor}
         />
-        <View style={styles.modalContainer}>
+        <View
+          style={[styles.modalContainer, { backgroundColor: backgroundColor }]}
+        >
           <View style={styles.avatarContainer}>
             {avatar ? (
               <Image source={{ uri: avatar }} style={styles.avatarIcon} />
@@ -58,7 +66,7 @@ const EditProfileModal = ({
           </View>
 
           <View style={styles.boxInput}>
-            <Text style={styles.titleInput}>Nome</Text>
+            <Text style={[styles.titleInput, { color: textColor }]}>Nome</Text>
             <MainInput
               onChange={(t) => changeName(t)}
               placeholder="example"
@@ -69,7 +77,7 @@ const EditProfileModal = ({
           </View>
 
           <View style={styles.boxInput}>
-            <Text style={styles.titleInput}>Email</Text>
+            <Text style={[styles.titleInput, { color: textColor }]}>Email</Text>
             <MainInput
               ref={emailRef}
               onChange={(t) => changeEmail(t)}
@@ -120,7 +128,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "100%",
-    backgroundColor: Colors.white,
     borderTopEndRadius: 12,
     borderTopStartRadius: 12,
     paddingHorizontal: 20,

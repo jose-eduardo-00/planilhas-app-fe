@@ -59,7 +59,7 @@ const ProfileScreen = () => {
 
   const { updateToken } = useGlobalContext();
 
-  const { token } = useGlobalContext();
+  const { token, theme } = useGlobalContext();
 
   const handleCheckToken = () => {
     if (token) {
@@ -223,18 +223,21 @@ const ProfileScreen = () => {
     }
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <ScrollView
       contentContainerStyle={styles.scrollView}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: backgroundColor }]}>
         <StatusBar
-          barStyle={"dark-content"}
+          barStyle={theme === "light" ? "dark-content" : "light-content"}
           translucent={true}
-          backgroundColor={Colors.white}
+          backgroundColor={backgroundColor}
         />
-        <Text style={styles.title}>Perfil</Text>
+        <Text style={[styles.title, { color: textColor }]}>Perfil</Text>
 
         <View style={styles.avatarContainer}>
           {avatar ? (
@@ -248,7 +251,7 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.boxInput}>
-          <Text style={styles.titleInput}>Nome</Text>
+          <Text style={[styles.titleInput, { color: textColor }]}>Nome</Text>
           <MainInput
             onChange={(t) => handleName(t)}
             placeholder="example"
@@ -259,7 +262,7 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.boxInput}>
-          <Text style={styles.titleInput}>Email</Text>
+          <Text style={[styles.titleInput, { color: textColor }]}>Email</Text>
           <MainInput
             ref={emailRef}
             onChange={(t) => handleEmail(t)}
@@ -323,7 +326,6 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 20,
     paddingHorizontal: 25,
   },

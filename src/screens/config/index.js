@@ -7,66 +7,102 @@ import {
   StatusBar,
 } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
-import { useNavigation } from "@react-navigation/native";
 import ThemeApp from "../../../assets/icon/themeApp";
-import Notification from "../../../assets/icon/notification";
+import Notification from "../../../assets/icon/notification.svg";
 import Config from "../../../assets/icon/config";
 import ThemeModal from "../../components/modals/themeModal";
+import { useGlobalContext } from "../../context/context";
 
 const ConfigScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState("claro");
-  const navigation = useNavigation();
 
-  const themes = [
-    { id: "claro", label: "Claro" },
-    { id: "escuro", label: "Escuro" },
-    { id: "sistema", label: "Tema do dispositivo" },
-  ];
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+  const iconColor = theme === "light" ? "#212121" : "#FFF";
 
   const handleThemeModal = () => {
     setModalVisible(!modalVisible);
   };
 
+  const handleCloseModalTheme = () => {
+    setModalVisible(false);
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
-      <Text style={styles.title}>Configurações</Text>
+      <Text style={[styles.title, { color: textColor }]}>Configurações</Text>
 
       {/* lista de config */}
       <View style={styles.settingsList}>
         <TouchableOpacity style={styles.option} onPress={handleThemeModal}>
-          <ThemeApp />
-          <Text style={styles.optionText}>Tema do App</Text>
+          <ThemeApp
+            width={23}
+            height={23}
+            style={[styles.icon2, { color: iconColor }]}
+          />
+          <Text style={[styles.optionText, { color: textColor }]}>
+            Tema do App
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option}>
-          <Notification />
-          <Text style={styles.optionText}>Notificações</Text>
+          <Notification
+            width={30}
+            height={30}
+            style={[styles.icon, { color: iconColor }]}
+          />
+          <Text style={[styles.optionText, { color: textColor }]}>
+            Notificações
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option}>
-          <Config />
-          <Text style={styles.optionText}>Configuração 3</Text>
+          <Config
+            width={25}
+            height={25}
+            style={[styles.icon1, { color: iconColor }]}
+          />
+          <Text style={[styles.optionText, { color: textColor }]}>
+            Configuração 3
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option}>
-          <Config />
-          <Text style={styles.optionText}>Configuração 4</Text>
+          <Config
+            width={25}
+            height={25}
+            style={[styles.icon1, { color: iconColor }]}
+          />
+          <Text style={[styles.optionText, { color: textColor }]}>
+            Configuração 4
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option}>
-          <Config />
-          <Text style={styles.optionText}>Configuração 5</Text>
+          <Config
+            width={25}
+            height={25}
+            style={[styles.icon1, { color: iconColor }]}
+          />
+          <Text style={[styles.optionText, { color: textColor }]}>
+            Configuração 5
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* modal seleção de tema */}
-      <ThemeModal onPress={handleThemeModal} visible={modalVisible} />
+      <ThemeModal
+        onPress={handleThemeModal}
+        visible={modalVisible}
+        onCancel={handleCloseModalTheme}
+      />
     </View>
   );
 };
@@ -74,7 +110,6 @@ const ConfigScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 30,
     paddingHorizontal: 30,
   },
@@ -98,6 +133,18 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Roboto-Regular",
     marginLeft: 10,
+  },
+  icon: {
+    marginLeft: -2,
+    marginRight: -3,
+  },
+  icon1: {
+    marginLeft: -1,
+    marginRight: 0,
+  },
+  icon2: {
+    marginLeft: 3,
+    marginRight: -2,
   },
 });
 

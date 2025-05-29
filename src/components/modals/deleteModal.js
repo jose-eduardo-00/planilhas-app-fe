@@ -3,6 +3,7 @@ import { Modal, StatusBar, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import LottieView from "lottie-react-native";
 import MainButton from "../buttons/mainButton";
+import { useGlobalContext } from "../../context/context";
 
 const DeleteModal = ({
   visible,
@@ -13,6 +14,11 @@ const DeleteModal = ({
   textButton,
   cancelPress,
 }) => {
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <Modal
       transparent={true}
@@ -26,7 +32,9 @@ const DeleteModal = ({
           translucent={true}
           backgroundColor={"rgba(0, 0, 0, 0.5)"}
         />
-        <View style={styles.modalContainer}>
+        <View
+          style={[styles.modalContainer, { backgroundColor: backgroundColor }]}
+        >
           {/* Animação de Sucesso ou Erro */}
           <LottieView
             source={
@@ -40,7 +48,7 @@ const DeleteModal = ({
           />
 
           {/* Mensagem de Sucesso ou Erro */}
-          <Text style={styles.message}>{message}</Text>
+          <Text style={[styles.message, { color: textColor }]}>{message}</Text>
 
           {/* Botão de Fechar */}
           {/* <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -78,7 +86,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "80%",
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: 20,
     alignItems: "center",
@@ -90,7 +97,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 18,
-    color: Colors.black,
     textAlign: "center",
     marginBottom: 20,
     fontFamily: "Roboto-Regular",

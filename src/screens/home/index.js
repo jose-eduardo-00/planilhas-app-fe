@@ -10,9 +10,12 @@ import IconPerfil from "../../../assets/icon/perfilBlackIcon.svg";
 import IconNotification from "../../../assets/icon/notification.svg";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import api from "../../../service/api/planilha/index";
+import { useGlobalContext } from "../../context/context";
 
 const HomeScreen = () => {
   const [planilha, setPlanilha] = useState(null);
+
+  const { theme } = useGlobalContext();
 
   const navigation = useNavigation();
 
@@ -39,15 +42,55 @@ const HomeScreen = () => {
       icon: IconNotification,
       name: "Notificações",
       onPress: handleNotificacoes,
+      height: 35,
+      width: 35,
     },
-    { id: "2", icon: IconFile, name: "Planilhas", onPress: handlePlanilha },
-    { id: "3", icon: IconPlus, name: "Criar Planilha", onPress: handlePlus },
-    { id: "4", icon: IconGraph, name: "Gráficos", onPress: handleGraph },
-    { id: "5", icon: IconPerfil, name: "Perfil", onPress: handlePerfil },
+    {
+      id: "2",
+      icon: IconFile,
+      name: "Planilhas",
+      onPress: handlePlanilha,
+      height: 30,
+      width: 30,
+    },
+    {
+      id: "3",
+      icon: IconPlus,
+      name: "Criar Planilha",
+      onPress: handlePlus,
+      height: 25,
+      width: 25,
+    },
+    {
+      id: "4",
+      icon: IconGraph,
+      name: "Gráficos",
+      onPress: handleGraph,
+      height: 25,
+      width: 25,
+    },
+    {
+      id: "5",
+      icon: IconPerfil,
+      name: "Perfil",
+      onPress: handlePerfil,
+      height: 25,
+      width: 25,
+    },
   ];
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+  const iconColor = theme === "light" ? "#212121" : "#FFF";
+
   const renderItem = ({ item }) => (
-    <ButtonCard Icon={item.icon} name={item.name} onPress={item.onPress} />
+    <ButtonCard
+      Icon={item.icon}
+      name={item.name}
+      onPress={item.onPress}
+      iconHeight={item.height}
+      iconWidth={item.width}
+    />
   );
 
   const handleGetPlanilha = () => {
@@ -73,10 +116,12 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       {planilha && (
         <View style={styles.boxRecent}>
-          <Text style={styles.titleRecent}>Visualizado Recentemente</Text>
+          <Text style={[styles.titleRecent, { color: textColor }]}>
+            Visualizado Recentemente
+          </Text>
           <MainCard
             name={planilha.nome}
             date={planilha.createdAt}
@@ -100,7 +145,6 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 50,
   },
   boxRecent: {

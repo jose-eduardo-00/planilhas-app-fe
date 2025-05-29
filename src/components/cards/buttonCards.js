@@ -1,14 +1,18 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
+import { useGlobalContext } from "../../context/context";
 
-const ButtonCard = ({ name, onPress, Icon }) => {
+const ButtonCard = ({ name, onPress, Icon, iconWidth, iconHeight }) => {
+  const { theme } = useGlobalContext();
+
+  const textColor = theme === "light" ? "#212121" : "#FFF";
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.boxIcon}>
-        <Icon />
+        <Icon width={iconWidth} height={iconHeight} />
       </View>
-      <Text style={styles.name}>{name}</Text>
+      <Text style={[styles.name, { color: textColor }]}>{name}</Text>
     </TouchableOpacity>
   );
 };

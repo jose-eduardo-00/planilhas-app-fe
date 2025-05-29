@@ -6,6 +6,7 @@ import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../../../service/api/user/index";
 import AlertModal from "../../../components/modals/alertModal";
+import { useGlobalContext } from "../../../context/context";
 
 const SendEmailScreen = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +18,8 @@ const SendEmailScreen = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const inputRef = useRef(null);
+
+  const { theme } = useGlobalContext();
 
   const navigation = useNavigation();
 
@@ -67,11 +70,16 @@ const SendEmailScreen = () => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Enviar Email</Text>
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
 
-      <Text style={styles.subTitle}>Insira seu email cadastrado no app</Text>
+  return (
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.title, { color: textColor }]}>Enviar Email</Text>
+
+      <Text style={[styles.subTitle, { color: textColor }]}>
+        Insira seu email cadastrado no app
+      </Text>
 
       <View style={styles.boxInput}>
         <MainInput

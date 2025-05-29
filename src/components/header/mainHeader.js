@@ -3,13 +3,19 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import Arrow from "../../../assets/icon/arrowBack.svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useGlobalContext } from "../../context/context";
 
 const MainHeader = () => {
   const navigation = useNavigation();
 
+  const { theme } = useGlobalContext();
+
   const route = useRoute();
 
   const rota = route.params?.rota;
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const iconColor = theme === "light" ? "#212121" : "#FFF";
 
   const back = () => {
     if (rota) {
@@ -22,9 +28,9 @@ const MainHeader = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <TouchableOpacity style={styles.ButtonArea} onPress={() => back()}>
-        <Arrow />
+        <Arrow style={{ color: iconColor }} />
       </TouchableOpacity>
     </View>
   );
@@ -36,7 +42,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.white,
     position: "relative",
   },
   ButtonArea: {

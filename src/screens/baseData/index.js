@@ -6,8 +6,9 @@ import MainButton from "../../components/buttons/mainButton";
 import api from "../../../service/api/user/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlertModal from "../../components/modals/alertModal";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useGlobalContext } from "../../context/context";
+import { jwtDecode } from "jwt-decode";
 
 const BaseDataScreen = () => {
   const [user, setUser] = useState(null);
@@ -31,7 +32,9 @@ const BaseDataScreen = () => {
   const salarioRef = useRef(null);
   const outrosRef = useRef(null);
 
-  const { token, updateToken } = useGlobalContext();
+  const navigation = useNavigation();
+
+  const { token, updateToken, theme } = useGlobalContext();
 
   const formatCurrency = (value) => {
     let num = value.replace(/\D/g, ""); // Remove tudo que não for número
@@ -54,12 +57,14 @@ const BaseDataScreen = () => {
   const handleToken = async () => {
     if (token) {
       const parsedUser = jwtDecode(token);
-
-      setUser(parsedUser);
-      handleSalario(formatCurrencyValue(parsedUser.salario));
-      handleOutros(formatCurrencyValue(parsedUser.outras_fontes));
+      console.log(parsedUser);
+      setUser(parsedUser.user);
+      handleSalario(formatCurrencyValue(parsedUser.user.salario));
+      handleOutros(formatCurrencyValue(parsedUser.user.outras_fontes));
     } else {
-      return;
+      navigation.reset({
+        routes: [{ name: "Login" }],
+      });
     }
   };
 
@@ -125,19 +130,22 @@ const BaseDataScreen = () => {
     setVisible(!visible);
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
       <View style={styles.boxTitle}>
-        <Text style={styles.title}>Dados Base</Text>
+        <Text style={[styles.title, { color: textColor }]}>Dados Base</Text>
       </View>
 
       <View style={styles.boxInput}>
-        <Text style={styles.titleInput}>Salário</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>Salário</Text>
         <MainInput
           onChange={handleSalario}
           placeholder={"R$ 00,00"}
@@ -152,7 +160,9 @@ const BaseDataScreen = () => {
       </View>
 
       <View style={styles.boxInput1}>
-        <Text style={styles.titleInput}>Outras Fontes</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>
+          Outras Fontes
+        </Text>
         <MainInput
           ref={outrosRef}
           onChange={handleOutros}
@@ -190,7 +200,6 @@ const BaseDataScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 40,
     paddingHorizontal: 25,
   },
@@ -211,7 +220,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 15,
     fontFamily: "Roboto-Regular",
-    color: Colors.black,
   },
   boxInput1: {
     marginTop: 20,

@@ -14,10 +14,13 @@ import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../../../service/api/user/index";
 import AlertModal from "../../../components/modals/alertModal";
+import { useGlobalContext } from "../../../context/context";
 // import * as Notifications from "expo-notifications";
 // import * as Device from "expo-device";
 
 const RegisterScreen = () => {
+  const { theme } = useGlobalContext();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -221,16 +224,19 @@ const RegisterScreen = () => {
   //   registerForPushNotifications();
   // }, []);
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <ScrollView
       contentContainerStyle={styles.scrollView}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.container}>
-        <Text style={styles.title}>Cadastro</Text>
+      <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+        <Text style={[styles.title, { color: textColor }]}>Cadastro</Text>
 
         <View style={styles.boxInput}>
-          <Text style={styles.titleInput}>Nome</Text>
+          <Text style={[styles.titleInput, { color: textColor }]}>Nome</Text>
           <MainInput
             onChange={handleName}
             placeholder={"Nome"}
@@ -244,7 +250,7 @@ const RegisterScreen = () => {
         </View>
 
         <View style={styles.boxInput1}>
-          <Text style={styles.titleInput}>Email</Text>
+          <Text style={[styles.titleInput, { color: textColor }]}>Email</Text>
           <MainInput
             ref={emailRef}
             onChange={handleEmail}
@@ -260,7 +266,7 @@ const RegisterScreen = () => {
         </View>
 
         <View style={styles.boxInput1}>
-          <Text style={styles.titleInput}>Senha</Text>
+          <Text style={[styles.titleInput, { color: textColor }]}>Senha</Text>
           <MainInput
             ref={senhaRef}
             onChange={handleSenha}
@@ -277,7 +283,9 @@ const RegisterScreen = () => {
         </View>
 
         <View style={styles.boxInput1}>
-          <Text style={styles.titleInput}>Confimar senha</Text>
+          <Text style={[styles.titleInput, { color: textColor }]}>
+            Confimar senha
+          </Text>
           <MainInput
             ref={confSenhaRef}
             onChange={handleConfSenha}
@@ -308,7 +316,9 @@ const RegisterScreen = () => {
         </View>
 
         <TouchableOpacity style={styles.boxRegister} onPress={handleLogin}>
-          <Text style={styles.textRegister}>já tem conta?</Text>
+          <Text style={[styles.textRegister, { color: textColor }]}>
+            já tem conta?
+          </Text>
         </TouchableOpacity>
 
         <AlertModal

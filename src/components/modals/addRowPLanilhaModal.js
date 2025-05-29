@@ -11,6 +11,7 @@ import { Colors } from "../../../constants/colors/colors";
 import MainButton from "../buttons/mainButton";
 import MainInput from "../inputs/mainInput";
 import MainSelect from "../inputs/selectInput";
+import { useGlobalContext } from "../../context/context";
 
 const AddRowPlanilhaModal = ({
   visible,
@@ -38,6 +39,11 @@ const AddRowPlanilhaModal = ({
   textButton,
   handleSalvar,
 }) => {
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <Modal
       transparent={true}
@@ -47,13 +53,15 @@ const AddRowPlanilhaModal = ({
     >
       <View style={styles.modalBackground}>
         <StatusBar
-          barStyle={"dark-content"}
+          barStyle={theme === "light" ? "dark-content" : "light-content"}
           translucent={true}
-          backgroundColor={"rgba(0, 0, 0, 0.5)"}
+          backgroundColor={backgroundColor}
         />
-        <View style={styles.modalContainer}>
+        <View
+          style={[styles.modalContainer, { backgroundColor: backgroundColor }]}
+        >
           <View style={styles.boxInput}>
-            <Text style={styles.titleInput}>Nome</Text>
+            <Text style={[styles.titleInput, { color: textColor }]}>Nome</Text>
             <MainInput
               onChange={(t) => changeName(t)}
               placeholder={"Nome"}
@@ -68,7 +76,9 @@ const AddRowPlanilhaModal = ({
 
           <View style={styles.boxTwoInput}>
             <View style={styles.boxInput1}>
-              <Text style={styles.titleInput}>Tipo</Text>
+              <Text style={[styles.titleInput, { color: textColor }]}>
+                Tipo
+              </Text>
               {/* <MainInput
                 ref={typeRef}
                 onChange={(t) => changeType(t)}
@@ -90,7 +100,9 @@ const AddRowPlanilhaModal = ({
             </View>
 
             <View style={styles.boxInput2}>
-              <Text style={styles.titleInput}>Vencimento</Text>
+              <Text style={[styles.titleInput, { color: textColor }]}>
+                Vencimento
+              </Text>
               <MainInput
                 ref={dateRef}
                 onChange={(t) => changeDate(t)}
@@ -108,7 +120,7 @@ const AddRowPlanilhaModal = ({
           </View>
 
           <View style={styles.boxInput}>
-            <Text style={styles.titleInput}>Valor</Text>
+            <Text style={[styles.titleInput, { color: textColor }]}>Valor</Text>
             <MainInput
               ref={valueRef}
               onChange={(t) => changeValue(t)}

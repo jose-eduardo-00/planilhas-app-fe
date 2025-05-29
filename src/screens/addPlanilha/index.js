@@ -25,7 +25,7 @@ const AddPlanilhaScreen = () => {
   const [modalAlertSuccess, setModalAlertSuccess] = useState(false);
   const [modalAlertMessage, setModalAlertMessage] = useState("");
 
-  const { token } = useGlobalContext();
+  const { token, theme } = useGlobalContext();
 
   const handleCheckToken = () => {
     if (token) {
@@ -82,19 +82,22 @@ const AddPlanilhaScreen = () => {
     setModalAlertVisible(false);
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
       <View style={styles.boxTitle}>
-        <Text style={styles.title}>Criar Planilha</Text>
+        <Text style={[styles.title, { color: textColor }]}>Criar Planilha</Text>
       </View>
 
       <View style={styles.boxInput}>
-        <Text style={styles.titleInput}>Nome</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>Nome</Text>
         <MainInput
           onChange={handleName}
           placeholder={"Nome da planilha"}
@@ -130,7 +133,6 @@ const AddPlanilhaScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 40,
     paddingHorizontal: 25,
   },

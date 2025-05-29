@@ -66,7 +66,7 @@ const PlanilhaPreviewScreen = () => {
 
   const { id } = route.params;
 
-  const { token } = useGlobalContext();
+  const { token, theme } = useGlobalContext();
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -343,8 +343,12 @@ const PlanilhaPreviewScreen = () => {
     return "R$ 0,00"; // valor padrão em caso de erro
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const invertBackGround = theme === "light" ? "#FFF" : "#FFF";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   const renderRow = ({ item }) => (
-    <View style={styles.row}>
+    <View style={[styles.row, { backgroundColor: invertBackGround }]}>
       <Text style={styles.cell}>{item.nome}</Text>
       <Text style={styles.cell}>{formatDate(item.data)}</Text>
       <Text style={styles.cell}>{item.tipo}</Text>
@@ -361,14 +365,16 @@ const PlanilhaPreviewScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
       <View style={styles.boxTitle}>
-        <Text style={styles.title}>{planilha && planilha.nome}</Text>
+        <Text style={[styles.title, { color: textColor }]}>
+          {planilha && planilha.nome}
+        </Text>
       </View>
 
       <ScrollView
@@ -518,14 +524,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     bottom: 0,
+    paddingBottom: 80,
+    paddingTop: 50,
   },
   boxButton: {
     height: 35,
     width: "30%",
   },
   boxButtonPlus: {
-    height: 35,
-    width: 35,
+    height: 38,
+    width: 38,
   },
 });
 

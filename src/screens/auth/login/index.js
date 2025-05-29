@@ -34,7 +34,7 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const senhaRef = useRef(null);
 
-  const { updateToken } = useGlobalContext();
+  const { updateToken, theme } = useGlobalContext();
 
   const handleEmail = (t) => {
     setEmailFail(false);
@@ -110,17 +110,20 @@ const LoginScreen = () => {
     }
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
-      <Text style={styles.title}>Login</Text>
+      <Text style={[styles.title, { color: textColor }]}>Login</Text>
 
       <View style={styles.boxInput}>
-        <Text style={styles.titleInput}>Email</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>Email</Text>
         <MainInput
           onChange={handleEmail}
           placeholder={"Email"}
@@ -135,7 +138,7 @@ const LoginScreen = () => {
       </View>
 
       <View style={styles.boxInput1}>
-        <Text style={styles.titleInput}>Senha</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>Senha</Text>
         <MainInput
           ref={senhaRef}
           onChange={handleSenha}
@@ -164,7 +167,9 @@ const LoginScreen = () => {
       </View>
 
       <TouchableOpacity style={styles.boxRegister} onPress={handleRegister}>
-        <Text style={styles.textRegister}>Ainda não tem conta?</Text>
+        <Text style={[styles.textRegister, { color: textColor }]}>
+          Ainda não tem conta?
+        </Text>
       </TouchableOpacity>
 
       <AlertModal
@@ -182,7 +187,6 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 100,
     paddingHorizontal: 25,
   },

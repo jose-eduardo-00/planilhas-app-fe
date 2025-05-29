@@ -7,6 +7,7 @@ import RedEye from "../../../assets/icon/eyeRed.svg";
 import ClosedRedEye from "../../../assets/icon/closedEyeRed.svg";
 import GreenEye from "../../../assets/icon/eyeGreen.svg";
 import ClosedGreenEye from "../../../assets/icon/closedEyeGreen.svg";
+import { useGlobalContext } from "../../context/context";
 
 const MainInput = forwardRef(
   (
@@ -27,16 +28,18 @@ const MainInput = forwardRef(
     },
     ref
   ) => {
+    const { theme } = useGlobalContext();
+
+    const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+    const textColor = theme === "light" ? "#212121" : "#FFF";
+    const iconColor = theme === "light" ? "#212121" : "#FFF";
+
     return (
       <View
         style={[
           styles.inputArea,
           {
-            borderColor: fail
-              ? Colors.red
-              : success
-              ? Colors.green
-              : Colors.black,
+            borderColor: fail ? Colors.red : success ? Colors.green : textColor,
           },
         ]}
       >
@@ -46,8 +49,9 @@ const MainInput = forwardRef(
               ref={ref} // Adicionando referência
               onChangeText={onChange}
               placeholder={placeholder}
+              placeholderTextColor={textColor}
               value={text}
-              style={styles.inputPass}
+              style={[styles.inputPass, { color: textColor }]}
               secureTextEntry={isPasswordVisible}
               returnKeyType={returnKeyType}
               onSubmitEditing={onSubmitEditing} // Quando o usuário aperta "OK"
@@ -62,14 +66,14 @@ const MainInput = forwardRef(
                 ) : success ? (
                   <ClosedGreenEye />
                 ) : (
-                  <ClosedEye />
+                  <ClosedEye style={{ color: iconColor }} />
                 )
               ) : fail ? (
                 <RedEye />
               ) : success ? (
                 <GreenEye />
               ) : (
-                <Eye />
+                <Eye style={{ color: iconColor }} />
               )}
             </TouchableOpacity>
           </>
@@ -79,7 +83,8 @@ const MainInput = forwardRef(
             onChangeText={onChange}
             placeholder={placeholder}
             value={text}
-            style={styles.input}
+            style={[styles.input, { color: textColor }]}
+            placeholderTextColor={textColor}
             returnKeyType={returnKeyType}
             onSubmitEditing={onSubmitEditing} // Muda para o próximo input
             blurOnSubmit={false}

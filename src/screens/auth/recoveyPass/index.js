@@ -12,6 +12,7 @@ import MainButton from "../../../components/buttons/mainButton";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../../../service/api/user/index";
 import AlertModal from "../../../components/modals/alertModal";
+import { useGlobalContext } from "../../../context/context";
 
 const RecoveryPassScreen = ({ route }) => {
   const [senha, setSenha] = useState("");
@@ -37,6 +38,8 @@ const RecoveryPassScreen = ({ route }) => {
 
   const senhaRef = useRef(null);
   const confSenhaRef = useRef(null);
+
+  const { theme } = useGlobalContext();
 
   const { id } = route.params;
 
@@ -145,12 +148,15 @@ const RecoveryPassScreen = ({ route }) => {
     }
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nova Senha</Text>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.title, { color: textColor }]}>Nova Senha</Text>
 
       <View style={styles.boxInput}>
-        <Text style={styles.titleInput}>Senha</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>Senha</Text>
         <MainInput
           ref={senhaRef}
           onChange={handleSenha}
@@ -167,7 +173,9 @@ const RecoveryPassScreen = ({ route }) => {
       </View>
 
       <View style={styles.boxInput1}>
-        <Text style={styles.titleInput}>Confimar senha</Text>
+        <Text style={[styles.titleInput, { color: textColor }]}>
+          Confimar senha
+        </Text>
         <MainInput
           ref={confSenhaRef}
           onChange={handleConfSenha}
@@ -211,7 +219,6 @@ const RecoveryPassScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 55,
     paddingHorizontal: 25,
   },
@@ -225,7 +232,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 15,
     fontFamily: "Roboto-Regular",
-    color: Colors.black,
   },
   boxInput: {
     marginTop: 60,

@@ -10,8 +10,11 @@ import {
 import { Colors } from "../../../constants/colors/colors";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../../../assets/icon/arrowRight.svg";
+import { useGlobalContext } from "../../context/context";
 
 const NotificationScreen = () => {
+  const { theme } = useGlobalContext();
+
   const navigation = useNavigation();
 
   const notifications = [
@@ -21,14 +24,20 @@ const NotificationScreen = () => {
     "Sua planilha foi salva com sucesso!",
   ];
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const backgroundColorOption =
+    theme === "light" ? Colors.gray : Colors.thirdGray;
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+  const iconColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
-      <Text style={styles.title}>Notificações</Text>
+      <Text style={[styles.title, { color: textColor }]}>Notificações</Text>
 
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
@@ -36,9 +45,16 @@ const NotificationScreen = () => {
       >
         {notifications.map((notification, index) => (
           <View key={index} style={styles.settingsList}>
-            <TouchableOpacity style={styles.option}>
-              <Text style={styles.optionText}>{notification}</Text>
-              <ArrowIcon style={styles.arrow} />
+            <TouchableOpacity
+              style={[
+                styles.option,
+                { backgroundColor: backgroundColorOption },
+              ]}
+            >
+              <Text style={[styles.optionText, { color: textColor }]}>
+                {notification}
+              </Text>
+              <ArrowIcon style={[styles.arrow, { color: iconColor }]} />
             </TouchableOpacity>
           </View>
         ))}
@@ -50,7 +66,6 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 30,
     paddingHorizontal: 40,
   },
@@ -72,7 +87,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 12,
-    backgroundColor: Colors.gray,
   },
   optionText: {
     fontSize: 16,

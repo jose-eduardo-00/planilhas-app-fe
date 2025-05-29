@@ -3,6 +3,7 @@ import { Modal, StatusBar, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import LottieView from "lottie-react-native";
 import MainButton from "../buttons/mainButton";
+import { useGlobalContext } from "../../context/context";
 
 const AlertModal = ({
   visible,
@@ -12,6 +13,11 @@ const AlertModal = ({
   isLoadingModal,
   textButton,
 }) => {
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <Modal
       transparent={true}
@@ -25,7 +31,9 @@ const AlertModal = ({
           translucent={true}
           backgroundColor={"rgba(0, 0, 0, 0.5)"}
         />
-        <View style={styles.modalContainer}>
+        <View
+          style={[styles.modalContainer, { backgroundColor: backgroundColor }]}
+        >
           {/* Animação de Sucesso ou Erro */}
           <LottieView
             source={
@@ -39,7 +47,7 @@ const AlertModal = ({
           />
 
           {/* Mensagem de Sucesso ou Erro */}
-          <Text style={styles.message}>{message}</Text>
+          <Text style={[styles.message, { color: textColor }]}>{message}</Text>
 
           {/* Botão de Fechar */}
           {/* <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -68,7 +76,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "80%",
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: 20,
     alignItems: "center",
@@ -86,7 +93,6 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
   },
   button: {
-    backgroundColor: Colors.thirdBlack,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,

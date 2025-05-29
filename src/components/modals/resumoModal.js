@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, StatusBar, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import MainButton from "../buttons/mainButton";
+import { useGlobalContext } from "../../context/context";
 
 const ResumoModal = ({
   visible,
@@ -12,6 +13,11 @@ const ResumoModal = ({
   isLoadingModal,
   textButton,
 }) => {
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
     <Modal
       transparent={true}
@@ -25,20 +31,30 @@ const ResumoModal = ({
           translucent={true}
           backgroundColor={"rgba(0, 0, 0, 0.5)"}
         />
-        <View style={styles.modalContainer}>
+        <View
+          style={[styles.modalContainer, { backgroundColor: backgroundColor }]}
+        >
           <View style={styles.boxMessage}>
-            <Text style={styles.message}>RENDA:</Text>
-            <Text style={styles.messageValue}>{renda}</Text>
+            <Text style={[styles.message, { color: textColor }]}>RENDA:</Text>
+            <Text style={[styles.messageValue, { color: textColor }]}>
+              {renda}
+            </Text>
           </View>
 
           <View style={styles.boxMessage1}>
-            <Text style={styles.message}>TOTAL DAS CONTAS:</Text>
-            <Text style={styles.messageValue}>{total}</Text>
+            <Text style={[styles.message, { color: textColor }]}>
+              TOTAL DAS CONTAS:
+            </Text>
+            <Text style={[styles.messageValue, { color: textColor }]}>
+              {total}
+            </Text>
           </View>
 
           <View style={styles.boxMessage1}>
-            <Text style={styles.message}>SALDO:</Text>
-            <Text style={styles.messageValue}>{saldo}</Text>
+            <Text style={[styles.message, { color: textColor }]}>SALDO:</Text>
+            <Text style={[styles.messageValue, { color: textColor }]}>
+              {saldo}
+            </Text>
           </View>
 
           <View style={styles.boxButton}>
@@ -63,7 +79,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "80%",
-    backgroundColor: Colors.white,
     borderRadius: 12,
     paddingHorizontal: 20,
     paddingVertical: 30,

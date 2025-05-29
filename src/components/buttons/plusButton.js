@@ -7,14 +7,23 @@ import {
 } from "react-native";
 import { Colors } from "../../../constants/colors/colors";
 import PlusIcon from "../../../assets/icon/plusBlackIcon.svg";
+import { useGlobalContext } from "../../context/context";
 
 const PlusButton = ({ onPress, isLoading }) => {
+  const { theme } = useGlobalContext();
+
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: backgroundColor }]}
+      onPress={onPress}
+    >
       {isLoading ? (
-        <ActivityIndicator size={20} color={Colors.white} />
+        <ActivityIndicator size={20} color={textColor} />
       ) : (
-        <PlusIcon />
+        <PlusIcon width={"90%"} height={"90%"} style={{ color: textColor }} />
       )}
     </TouchableOpacity>
   );
@@ -23,7 +32,6 @@ const PlusButton = ({ onPress, isLoading }) => {
 const styles = StyleSheet.create({
   button: {
     flex: 1,
-    backgroundColor: Colors.white,
     width: "100%",
     height: "100%",
     borderRadius: 8,

@@ -13,6 +13,7 @@ import MainCard from "../../components/cards/mainCard";
 import MenuBottomModal from "../../components/modals/menuBottomModal";
 import api from "../../../service/api/planilha/index";
 import { useNavigation } from "@react-navigation/native";
+import { useGlobalContext } from "../../context/context";
 
 const PlanilhasScreen = () => {
   const [visible, setVisible] = useState(false);
@@ -23,6 +24,8 @@ const PlanilhasScreen = () => {
   const [visibleCountTemp, setVisibleCountTemp] = useState(2);
 
   const [planilhas, setPlanilhas] = useState(null);
+
+  const { theme } = useGlobalContext();
 
   const navigation = useNavigation();
 
@@ -70,17 +73,20 @@ const PlanilhasScreen = () => {
     navigation.navigate("PlanilhaPreview", { id: item.id });
   };
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <StatusBar
-        barStyle={"dark-content"}
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
         translucent={true}
-        backgroundColor={Colors.white}
+        backgroundColor={backgroundColor}
       />
       <View style={styles.boxTitle}>
-        <Text style={styles.title}>Planilhas</Text>
+        <Text style={[styles.title, { color: textColor }]}>Planilhas</Text>
         <TouchableOpacity onPress={handleVisibleModal}>
-          <IconFilter style={styles.iconFilter} />
+          <IconFilter style={[styles.iconFilter, { color: textColor }]} />
         </TouchableOpacity>
       </View>
 
@@ -117,13 +123,15 @@ const PlanilhasScreen = () => {
                 style={styles.buttonMore}
                 onPress={() => setVisibleCount((prev) => prev + 1)}
               >
-                <Text style={styles.textMore}>Ver mais</Text>
+                <Text style={[styles.textMore, { color: textColor }]}>
+                  Ver mais
+                </Text>
               </TouchableOpacity>
             )}
         </ScrollView>
       ) : (
         <View style={styles.boxTextOffPlan}>
-          <Text style={styles.textOffPlan}>
+          <Text style={[styles.textOffPlan, { color: textColor }]}>
             Você ainda não tem planilhas criadas!
           </Text>
         </View>
@@ -144,7 +152,6 @@ const PlanilhasScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 40,
     paddingHorizontal: 25,
   },
@@ -175,7 +182,6 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     fontSize: 18,
     fontFamily: "Roboto-Regular",
-    color: Colors.black,
   },
   boxTextOffPlan: {
     marginTop: 40,

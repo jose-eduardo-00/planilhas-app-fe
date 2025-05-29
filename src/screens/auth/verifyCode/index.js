@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import InputCode from "../../../components/inputs/inputCode";
 import api from "../../../../service/api/auth/index";
 import AlertModal from "../../../components/modals/alertModal";
+import { useGlobalContext } from "../../../context/context";
 
 const VerifyCodeScreen = ({ route }) => {
   const [code, setCode] = useState("");
@@ -29,6 +30,8 @@ const VerifyCodeScreen = ({ route }) => {
   const { email, rota, id } = route.params;
 
   const inputRef = useRef(null);
+
+  const { theme } = useGlobalContext();
 
   const navigation = useNavigation();
 
@@ -121,13 +124,16 @@ const VerifyCodeScreen = ({ route }) => {
     return () => clearInterval(timer); // Limpa o timer ao desmontar o componente
   }, [time]);
 
+  const backgroundColor = theme === "light" ? "#FFFFFF" : "#212121";
+  const textColor = theme === "light" ? "#212121" : "#FFF";
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.title, { color: textColor }]}>
         Insira o código que enviamos {"\n"} para o email
       </Text>
 
-      <Text style={styles.subTitle}>{emailCode}</Text>
+      <Text style={[styles.subTitle, { color: textColor }]}>{emailCode}</Text>
 
       <View style={styles.boxInput}>
         <InputCode
@@ -145,7 +151,7 @@ const VerifyCodeScreen = ({ route }) => {
         <Text
           style={[
             styles.textButtonRee,
-            time != 0 ? styles.textButtonReeOff : null,
+            time != 0 ? styles.textButtonReeOff : { color: textColor },
           ]}
         >
           Reenviar {time == 0 ? "" : `${time}s`}
@@ -201,7 +207,6 @@ const styles = StyleSheet.create({
   textButtonRee: {
     fontSize: 16,
     fontFamily: "Roboto-Regular",
-    color: Colors.black,
   },
   textButtonReeOff: {
     color: Colors.gray,
