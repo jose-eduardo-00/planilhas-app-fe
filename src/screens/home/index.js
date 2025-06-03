@@ -52,7 +52,9 @@ const HomeScreen = () => {
   const handlePlus = () => {
     navigation.navigate("AddPlanilha");
   };
-  const handleGraph = () => {};
+  const handleGraph = () => {
+    navigation.navigate("Graphics");
+  };
   const handlePerfil = () => {
     navigation.navigate("Profile");
   };

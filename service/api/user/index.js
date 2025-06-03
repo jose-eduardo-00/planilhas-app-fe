@@ -11,6 +11,7 @@ export default {
           senha: senha,
           renda_mensal: "00",
           expoToken: expoToken,
+          nivel: 2,
         },
         {
           headers: {

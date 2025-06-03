@@ -86,6 +86,12 @@ const LoginScreen = () => {
         setEmailFail(true);
         setSenhaFail(true);
         setVisible(true);
+      } else if (response.status === 403) {
+        setModalMessage("Essa conta está desativada ou banida!");
+        setModalSuccess(false);
+        setEmailFail(true);
+        setSenhaFail(true);
+        setVisible(true);
       } else {
         setModalMessage("Erro de conexão, tente novamente mais tarde!");
         setModalSuccess(false);

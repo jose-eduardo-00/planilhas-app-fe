@@ -16,6 +16,7 @@ import BaseDataScreen from "../screens/baseData";
 import PlanilhaPreviewScreen from "../screens/planilhaPreview";
 import PlanilhaEditScreen from "../screens/editPlanilha";
 import AddPlanilhaScreen from "../screens/addPlanilha";
+import GraphicsScreen from "../screens/graphics";
 
 const Stack = createStackNavigator();
 
@@ -108,6 +109,12 @@ function MainStack() {
       <Stack.Screen
         name="AddPlanilha"
         component={AddPlanilhaScreen}
+        options={{ header: () => <MainHeader /> }}
+      />
+
+      <Stack.Screen
+        name="Graphics"
+        component={GraphicsScreen}
         options={{ header: () => <MainHeader /> }}
       />
 

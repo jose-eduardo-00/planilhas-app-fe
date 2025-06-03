@@ -26,8 +26,6 @@ const SplashScreen = () => {
       api.checkToken(token).then((res) => {
         if (res.status === 200) {
           navigation.navigate("Drawer");
-        } else if (404) {
-          navigation.navigate("Login");
         } else {
           navigation.navigate("Login");
         }
